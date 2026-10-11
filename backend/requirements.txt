@@ -1,2 +1,4 @@
 pymupdf4llm
 markdown-it-py
+sentence-transformers
+faiss-cpu

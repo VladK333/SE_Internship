@@ -12,8 +12,8 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Konverzija dokumentacije u Markdown | Završeno |
 | 1 | URL-ovi izvora za citate | Završeno |
 | 1 | Ingestion: chunkovanje i metapodaci | Završeno |
-| 1 | Embeddings i FAISS indeks | U toku |
-| 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Nije počelo |
+| 1 | Embeddings i FAISS indeks | Završeno |
+| 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Sledeće |
 | 1 | Istraživanje Markdown biblioteka za WPF | Nije počelo |
 | 2 | LLM i guardrails | Nije počelo |
 | 2 | WPF klijent (.NET Framework 4.8) | Nije počelo |
@@ -132,6 +132,49 @@ part:         1/2
 
 **Pokretanje:** `python backend/ingestion/chunk.py`
 
+## 5. Embeddings i FAISS indeks
+
+**Skripte:** `backend/ingestion/build_index.py` (pravi indeks), `backend/app/retriever.py` (pretraga) · **Rezultat:** `data/index/`
+
+**Izbori:**
+
+| Deo | Izbor | Zašto |
+| --- | --- | --- |
+| Embedding model | `BAAI/bge-small-en-v1.5` (384 dimenzije) | Mali open-source model koji preporučuje specifikacija; radi na CPU, dokumentacija je na engleskom |
+| Vektorska baza | FAISS `IndexFlatIP` sa normalizovanim vektorima | Preporuka iz specifikacije; skalarni proizvod normalizovanih vektora je kosinusna sličnost, a tačna pretraga je dovoljno brza za 804 vektora |
+| Tekst koji se embeduje | putanja naslova + tekst chunka | Kratke sekcije (npr. jedan parametar) dobijaju kontekst iz nadređenih naslova |
+| Pitanje | prefiks koji preporučuju autori bge modela | Poboljšava poklapanje kratkih pitanja sa dužim pasusima |
+
+**Rezultat:** 804 vektora, indeks se pravi za oko 80 sekundi na CPU. Indeks se ne čuva u git-u jer se generiše iz `chunks.jsonl`.
+
+**Prva provera pretrage** (top 3 sekcije, skor = kosinusna sličnost):
+
+| Pitanje | Najbolji pogodak | Skor |
+| --- | --- | --- |
+| How are ACLineSegments imported from CGMES? | CIM-CGMES > Import > ACLineSegment (2. i 3. mesto; 1. mesto DCLineSegment) | 0.79 |
+| Which CGMES versions are supported? | CIM-CGMES > Format specification | 0.84 |
+| How do I configure the default load flow provider? | Load flow > Configuration | 0.79 |
+| What is a dangling line? | Network and subnetwork > Dangling line | 0.76 |
+| How to run a security analysis with itools? | iTools > iTools security-analysis | 0.89 |
+| What parameters does short-circuit analysis have? | Short-circuit analysis > Parameters | 0.79 |
+| What is the capital of France? *(nije u dokumentaciji)* | — | 0.46 |
+| How do I bake chocolate cake? *(nije u dokumentaciji)* | — | 0.48 |
+| How do I install Kubernetes on Ubuntu? *(nije u dokumentaciji)* | — | 0.63 |
+
+Pitanja na koja dokumentacija ima odgovor dobijaju skor 0.74–0.89, a pitanja van teme 0.46–0.63. To je dobra osnova za guardrail „odbij ako je pretraga slaba“ iz 2. nedelje: prag će biti između ove dve grupe (okvirno oko 0.68), a tačna vrednost biće određena na evaluacionom skupu pitanja.
+
+**Otvorena pitanja:**
+
+- Kod pitanja o ACLineSegment, sekcija DCLineSegment je na prvom mestu jer su tekstovi vrlo slični. Ispravna sekcija je i dalje u top 3, što je metrika iz specifikacije. Ako se ovo ponavlja u evaluaciji, rešenje je hibridna pretraga (BM25 + vektori, bonus iz specifikacije) ili reranker.
+- Pitanja van teme ali tehnička (Kubernetes) imaju viši skor (0.63) od potpuno nepovezanih, pa prag mora biti proveren i na takvim pitanjima.
+
+**Pokretanje:**
+
+```
+python backend/ingestion/build_index.py
+python backend/app/retriever.py "Which CGMES versions are supported?"
+```
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -141,3 +184,4 @@ part:         1/2
 | 11.10.2026. | Izvlačenje i provera URL-ova izvora i slika |
 | 11.10.2026. | Chunker sa metapodacima |
 | 11.10.2026. | Uveden ovaj izveštaj o napretku |
+| 11.10.2026. | Embeddings (bge-small-en-v1.5) i FAISS indeks, modul za pretragu |

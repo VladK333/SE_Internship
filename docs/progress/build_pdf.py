@@ -62,12 +62,17 @@ def main():
         raise SystemExit("Nije pronadjen Edge ni Chrome.")
     with tempfile.TemporaryDirectory() as tmp:
         page = pathlib.Path(tmp) / "report.html"
+        pdf = pathlib.Path(tmp) / "report.pdf"
         page.write_text(html, encoding="utf-8")
         subprocess.run([browser, "--headless=new", "--disable-gpu", "--no-pdf-header-footer",
-                        f"--user-data-dir={tmp}", f"--print-to-pdf={OUT}", page.as_uri()],
+                        f"--user-data-dir={tmp}", f"--print-to-pdf={pdf}", page.as_uri()],
                        check=True, capture_output=True, timeout=120)
-    if not OUT.exists():
-        raise SystemExit(f"PDF nije napravljen ({browser}).")
+        if not pdf.exists():
+            raise SystemExit(f"PDF nije napravljen ({browser}).")
+        try:
+            shutil.copyfile(pdf, OUT)
+        except PermissionError:
+            raise SystemExit(f"{OUT.name} je otvoren u drugom programu. Zatvori ga i pokreni ponovo.")
     print(f"Gotovo: {OUT}")
 
 
