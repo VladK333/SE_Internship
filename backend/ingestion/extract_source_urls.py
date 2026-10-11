@@ -53,10 +53,10 @@ def parse(md_path):
         label = None if not m and line.strip() else label if not m else None
         for alt, src in re.findall(r"!\[([^\]]*)\]\(([^)\s]+)", line):
             if "dark_mode" not in src and not src.startswith("http"):
-                imgs.append({"alt": alt, "src": src})
+                imgs.append({"alt": alt, "src": src, "sec": len(heads) - 1})
         for src in re.findall(r"```\{(?:image|figure)\}\s+(\S+)", line):
             if "dark_mode" not in src:
-                imgs.append({"alt": "", "src": src})
+                imgs.append({"alt": "", "src": src, "sec": len(heads) - 1})
     return rel, heads, imgs
 
 files = sorted(p for p in SRC.rglob("*.md") if p.name != "README.md")
@@ -81,19 +81,21 @@ for rel, heads, imgs in parsed:
     crumbs = [c for c in crumbs if c]
     if rel.endswith("index.md") and crumbs:
         crumbs = crumbs[:-1]
+    img_urls = []
+    for im in imgs:
+        name = pathlib.PurePosixPath(im["src"]).name
+        img_urls.append({"alt": im["alt"], "url": BASE + "_images/" + name, "sec": im["sec"]})
     stack, page_secs = [], []
-    for h in heads:
+    for idx, h in enumerate(heads):
         stack = [s for s in stack if s["level"] < h["level"]] + [h]
         path = " > ".join(crumbs + [s["heading"] for s in stack])
         anchor = next((a for a in (h["label"], slug(h["heading"])) if a and a in ids), None)
         url = page_url(rel) + (f"#{anchor}" if anchor and h is not heads[0] else "")
-        sec = {"heading": h["heading"], "level": h["level"], "heading_path": path, "url": url}
+        sec = {"heading": h["heading"], "level": h["level"], "heading_path": path, "url": url,
+               "images": [{"alt": i["alt"], "url": i["url"]} for i in img_urls if i["sec"] == idx]}
         page_secs.append(sec)
         sections.append({"file": rel, **sec})
-    img_urls = []
-    for im in imgs:
-        name = pathlib.PurePosixPath(im["src"]).name
-        img_urls.append({"alt": im["alt"], "url": BASE + "_images/" + name})
+    img_urls = [{"alt": i["alt"], "url": i["url"]} for i in img_urls]
     pages.append({"file": rel, "title": titles[rel], "url": page_url(rel),
                   "breadcrumb": " > ".join(crumbs), "sections": page_secs, "images": img_urls})
 
@@ -103,6 +105,8 @@ with ThreadPoolExecutor(8) as ex:
     ok = dict(zip(all_imgs, ex.map(lambda u: fetch(u)[0] == 200, all_imgs)))
 for p in pages:
     p["images"] = [i for i in p["images"] if ok[i["url"]]]
+    for s in p["sections"]:
+        s["images"] = [i for i in s["images"] if ok[i["url"]]]
 
 out = {
     "source": "PowSyBl powsybl-core documentation",
