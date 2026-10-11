@@ -1,0 +1,14 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# FAISS indeks i ostali generisani podaci
+data/index/*
+!data/index/.gitkeep
+
+# .NET / Visual Studio
+bin/
+obj/
+.vs/
+*.user

@@ -2184,13 +2184,13 @@ If an angle regulation is defined for a transformer, it is converted into a _pha
 **<u>powsybl-core, Release 7.1.1</u>** 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0050-01.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0050-01.png)
 
 
 • for a symmetrical regulation (e.g. Θ = 90) 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0050-03.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0050-03.png)
 
 
 **Note:** The sign of _𝛼_ is changed because the phase tap changer is on side 2 in UCTE-DEF, and on side 1 in IIDM. 
@@ -3767,11 +3767,11 @@ A load is a passive equipment representing a delivery point that consumes or pro
    - `ZIP` (or polynomial), following equations: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-17.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-17.png)
 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-18.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-18.png)
 
 
 with _𝑣_ 0 the nominal voltage. Sum of _𝑐_ 0 _𝑝_ , _𝑐_ 1 _𝑝_ and _𝑐_ 2 _𝑝_ must be equal to 1. Sum of _𝑐_ 0 _𝑞_ , _𝑐_ 1 _𝑞_ and _𝑐_ 2 _𝑞_ must be equal to 1. 
@@ -3779,11 +3779,11 @@ with _𝑣_ 0 the nominal voltage. Sum of _𝑐_ 0 _𝑝_ , _𝑐_ 1 _𝑝_ and 
 - `EXPONENTIAL` , following equations: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-21.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-21.png)
 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-22.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0084-22.png)
 
 
 with _𝑣_ 0 the nominal voltage. _𝑛𝑝_ and _𝑛𝑞_ are expected to be positive. 
@@ -4043,7 +4043,7 @@ It may be controlled to hold a voltage or reactive setpoint somewhere in the net
 _𝑄𝑚𝑖𝑛_ = _−𝐵𝑚𝑖𝑛 × 𝑉_<sup>2</sup> 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0089-10.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0089-10.png)
 
 
 where _𝑉_ is the voltage of the bus that connects the static VAR compensator to the network. Even if the regulating terminal is remote, only the local voltage has to be considered to retrieve the minimum and the maximum amount of reactive power. Reactive limits can be handled in an approximate way using the nominal voltage of the connected bus. 
@@ -4091,13 +4091,13 @@ AC transmission lines are modeled using a standard _𝜋_ model with distributed
 With series impedance _𝑧_ and the shunt admittance on each side _𝑦_ 1 and _𝑦_ 2: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0090-04.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0090-04.png)
 
 
 The equations of the line, in complex notations, are as follows: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0090-06.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0090-06.png)
 
 
 ### **Characteristics** 
@@ -4167,7 +4167,7 @@ A two-winding power transformer is connected to two voltage levels (side 1 and s
 With the series impedance _𝑧_ and the shunt admittance _𝑦_ and the voltage ratio _𝜌_ and the angle difference _𝛼_ and potential parameters from the current step of a _ratio tap changer_ and/or a _phase tap changer_ , we have: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0091-10.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0091-10.png)
 
 
 **2.1. Network and subnetwork** 
@@ -4179,7 +4179,7 @@ With the series impedance _𝑧_ and the shunt admittance _𝑦_ and the voltage
 Using the above notation, the equations of the two-winding transformers, in complex notations, are as follows: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0092-02.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0092-02.png)
 
 
 ### **Characteristics** 
@@ -4376,13 +4376,13 @@ The positive loss factor `LossFactor` is used to model the losses during the con
 - A rectifier operation (conversion from AC to DC), we have 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0095-10.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0095-10.png)
 
 
 - An inverter operation (conversion from DC to AC), we have 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0095-12.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0095-12.png)
 
 
 Note that at the terminal on the AC side, _𝑄_ is always positive: the converter station always consumes reactive power. 
@@ -5595,7 +5595,7 @@ line.newExtension(LinePositionAdder.class)
 A balanced load is described by its active power setpoint _𝑃_ 0 and its reactive power setpoint _𝑄_ 0. This extension is used to describe the power asymmetry for each ABC phase. In the three-phase representation, the complex power injected at a bus _𝑖_ is constant for each phase and represented by three complex values: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-12.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-12.png)
 
 
 But for a balanced load flow, the constant power load _𝑃_ and _𝑄_ refer to the positive sequence load. Given that, in balanced conditions, the load for zero and negative sequences should always be zero. However, in real life, power loads are better defined in the ABC three-phase representation. The load extension addresses this issue keeping the default behavior for balanced conditions. 
@@ -5605,13 +5605,13 @@ Balanced load flow conditions:
 In balanced conditions given the load at bus: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-16.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-16.png)
 
 
 We must verify: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-18.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0117-18.png)
 
 
 **2.3. Grid model extensions** 
@@ -5625,19 +5625,19 @@ Unbalanced load flow conditions:
 We must take into account that many loads are still balanced and information related to balanced loads is sufficient. The extension proposes a delta approach where unbalances are expressed in the extension. Supposing that: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-03.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-03.png)
 
 
 are provided in input through the extension. The three-phase power values used as inputs of an unbalanced load flow calculation are: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-05.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-05.png)
 
 
 As a consequence, if no extension provided for the load, the unbalanced load flow will use in input: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-07.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0118-07.png)
 
 
 |At-<br>tribute|Type|Unit|Re-<br>quired|De-<br>fault<br>value|Description|
@@ -5990,7 +5990,7 @@ This extension is used to model voltage control of static VAR compensators. This
 When this extension is present and the slope greater than zero, the reactive output of the static VAR compensator is defined by: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0124-17.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0124-17.png)
 
 
 where _𝑉_ is the voltage at regulating terminal and _𝑉𝑜𝑙𝑡𝑎𝑔𝑒𝑆𝑒𝑡𝑝𝑜𝑖𝑛𝑡_ the target value in voltage given as attribute in a static VAR compensator. 
@@ -6872,7 +6872,7 @@ A load flow result is considered _acceptable_ if it describes a feasible steady-
 The first law of Kirchhoff must be satisfied for every bus for active and reactive power: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0142-15.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0142-15.png)
 
 
 <!-- Start of picture text -->
@@ -11153,7 +11153,7 @@ The following example shows the results of the simulation of the previous script
 **<u>powsybl-core, Release 7.1.1</u>** 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0229-01.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0229-01.png)
 
 
 <!-- Start of picture text -->
@@ -11804,7 +11804,7 @@ The following example shows how to run a power flow simulation, using a paramete
 **<u>powsybl-core, Release 7.1.1</u>** 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0241-01.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0241-01.png)
 
 
 <!-- Start of picture text -->
@@ -12013,7 +12013,7 @@ If all values are present, or if only one value is missing, the result is consid
 The result on the branch is considered consistent if: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0244-13.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0244-13.png)
 
 
 For a branch that is disconnected on one end (for example, end 2), then _𝑃_ 2 = _𝑄_ 2 = 0. As a result, it is possible to recompute ( _𝑉_ 2 _, 𝜃_ 2) which are usually not returned by power flows and which are not stored in node-breaker _network_ format. The quality checks are done when this is done. 
@@ -12041,7 +12041,7 @@ The load-flow validation of PowSyBl checks whether the adjustment of balances ha
 Once the mode is determined, the new target can be computed for each unit. The following check is done: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0245-09.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0245-09.png)
 
 
 ### **Voltage and reactive power** 
@@ -12049,7 +12049,7 @@ Once the mode is determined, the new target can be computed for each unit. The f
 When the voltage regulation is disabled, the results’ validity follows the condition below: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0245-12.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0245-12.png)
 
 
 On the other hand, when the voltage regulation is enabled, depending on the generator’s mode, one of the three conditions should be respected: 
@@ -12126,7 +12126,7 @@ _𝑉_ 2( _𝑡𝑎𝑝_ ) = _𝜌𝑡𝑎𝑝𝑉_ 1
 **<u>powsybl-core, Release 7.1.1</u>** 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0247-01.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0247-01.png)
 
 
 We can therefore compute approximately the voltage increments corresponding to _𝑡𝑎𝑝 −_ 1 and _𝑡𝑎𝑝_ + 1. 
@@ -12509,7 +12509,7 @@ $>itoolssecurity-analysis--case-file20170322_1844_SN3_FR2.uct
 The analysis results are printed to the console: 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0254-08.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0254-08.png)
 
 
 <!-- Start of picture text -->
@@ -12544,14 +12544,14 @@ To run a post-contingencies security analysis, use the `--contingencies-file` ar
 **<u>powsybl-core, Release 7.1.1</u>** 
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0255-01.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0255-01.png)
 
 
 <!-- Start of picture text -->
 (continued from previous page)<br><!-- End of picture text -->
 
 
-![](out_pymupdf/img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0255-02.png)
+![](img/powsybl-readthedocs-io-powsybl-core-en-v7.1.1.pdf-0255-02.png)
 
 
 <!-- Start of picture text -->
