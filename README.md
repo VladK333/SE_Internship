@@ -9,6 +9,7 @@ Specifikacija: [docs/specification](docs/specification/DocPilot%20-%20Specificat
 SE_praksa/
 ├── docs/
 │   ├── specification/     # specifikacija zadatka
+│   ├── progress/          # izveštaj o napretku za mentora (.md izvor + PDF)
 │   └── research/          # istraživanje Markdown biblioteka, izveštaji
 ├── data/
 │   ├── raw/               # originalni PDF (powsybl-core 7.1.1, CC-BY-4.0)
