@@ -12,8 +12,7 @@ SE_praksa/
 │   └── research/          # istraživanje Markdown biblioteka, izveštaji
 ├── data/
 │   ├── raw/               # originalni PDF (powsybl-core 7.1.1, CC-BY-4.0)
-│   ├── processed/         # PDF konvertovan u Markdown + slike
-│   ├── reference_md/      # originalni .md izvori sa GitHub-a (za poređenje)
+│   ├── processed/         # PDF konvertovan u Markdown + slike, source_urls.json (URL-ovi izvora)
 │   └── index/             # FAISS indeks (generiše se, nije u git-u)
 ├── backend/               # Python server
 │   ├── ingestion/         # konverzija, chunkovanje, embeddings, indeksiranje
