@@ -31,7 +31,12 @@ Iz foldera `SE_praksa`:
 .venv\Scripts\activate
 pip install -r backend\requirements.txt
 python backend\ingestion\convert_pdf_to_md.py
+python backend\ingestion\chunk.py
+python backend\ingestion\build_index.py
+python -m uvicorn app.main:app --app-dir backend --port 8000
 ```
+
+API: `http://localhost:8000/docs` (opis u [backend/API.md](backend/API.md)).
 
 ## Izvor dokumentacije
 

@@ -13,8 +13,8 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | URL-ovi izvora za citate | Završeno |
 | 1 | Ingestion: chunkovanje i metapodaci | Završeno |
 | 1 | Embeddings i FAISS indeks | Završeno |
-| 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Sledeće |
-| 1 | Istraživanje Markdown biblioteka za WPF | Nije počelo |
+| 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
+| 1 | Istraživanje Markdown biblioteka za WPF | Sledeće |
 | 2 | LLM i guardrails | Nije počelo |
 | 2 | WPF klijent (.NET Framework 4.8) | Nije počelo |
 | 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
@@ -175,6 +175,37 @@ python backend/ingestion/build_index.py
 python backend/app/retriever.py "Which CGMES versions are supported?"
 ```
 
+## 6. HTTP API (`/chat` i `/health`)
+
+**Kod:** `backend/app/main.py` · **Dokumentacija API-ja:** `backend/API.md` i interaktivno na `http://localhost:8000/docs`
+
+**Izbor okvira:** FastAPI. Iz definicija zahteva i odgovora automatski pravi OpenAPI specifikaciju i Swagger stranicu za isprobavanje, čime je ispunjen zahtev da API bude dokumentovan. Validira JSON i ima ugrađen server (uvicorn).
+
+**Ugovor (minimum iz specifikacije):**
+
+| Endpoint | Zahtev | Odgovor |
+| --- | --- | --- |
+| `POST /chat` | `{ question }` | `{ answer (Markdown), sources[], refused }` |
+| `GET /health` | — | status servera, broj chunkova, embedding model, status LLM-a |
+
+Svaki izvor u `sources[]` sadrži naslov, putanju naslova, URL sekcije na readthedocs-u i skor sličnosti. U ovoj verziji `answer` sadrži 3 najrelevantnije sekcije u Markdown-u (naslov, putanja, tekst, slike sa HTTPS adresa, link ka izvoru), bez LLM-a, kako specifikacija traži za 1. nedelju. `refused` je za sada uvek `false`; odbijanje pri slaboj pretrazi dolazi u 2. nedelji.
+
+**Provera ulaza (guardrail 4 iz specifikacije):**
+
+| Ulaz | Odgovor |
+| --- | --- |
+| Prazno pitanje ili samo razmaci | `400` „Pitanje ne sme biti prazno.“ |
+| Pitanje duže od 1000 karaktera | `400` „Pitanje je predugo (N karaktera, dozvoljeno 1000).“ |
+| Neispravan JSON ili nema polja `question` | `422` |
+
+**Provera:** svi slučajevi iznad testirani su preko pravog HTTP servera. Model i indeks se učitavaju jednom pri startu servera, a odgovor na `/chat` stiže za oko 0,23 s.
+
+**Pokretanje:**
+
+```
+python -m uvicorn app.main:app --app-dir backend --port 8000
+```
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -185,3 +216,4 @@ python backend/app/retriever.py "Which CGMES versions are supported?"
 | 11.10.2026. | Chunker sa metapodacima |
 | 11.10.2026. | Uveden ovaj izveštaj o napretku |
 | 11.10.2026. | Embeddings (bge-small-en-v1.5) i FAISS indeks, modul za pretragu |
+| 15.10.2026. | HTTP API (FastAPI): `POST /chat` sa top 3 sekcije, `GET /health`, provera ulaza, dokumentacija API-ja |
