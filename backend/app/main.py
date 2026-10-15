@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from app import llm
 from app.retriever import Retriever
 
 TOP_K = 3
@@ -23,9 +24,9 @@ async def lifespan(app):
 
 app = FastAPI(
     title="DocPilot API",
-    version="0.1.0",
+    version="0.2.0",
     description="RAG chat nad PowSyBl dokumentacijom (powsybl-core 7.1.1, CC-BY-4.0). "
-                "U ovoj verziji /chat vraca top 3 najrelevantnije sekcije, bez LLM-a.",
+                "/chat pronalazi top 3 sekcije i iz njih lokalni LLM (Ollama) pise odgovor.",
     lifespan=lifespan,
 )
 
@@ -51,24 +52,13 @@ class ChatResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     index: dict
-    llm: str
+    llm: dict
     uptime_seconds: int
 
 
-def format_answer(results):
-    """Pravi Markdown odgovor od pronadjenih sekcija (bez LLM-a)."""
-    parts = []
-    for n, r in enumerate(results, start=1):
-        block = [f"### {n}. {r['title']}", f"*{r['heading_path']}*", "", r["text"]]
-        for img in r["images"]:
-            block += ["", f"![{img['alt']}]({img['url']})"]
-        block += ["", f"[Izvor]({r['url']})"]
-        parts.append("\n".join(block))
-    return "\n\n---\n\n".join(parts)
-
-
 @app.post("/chat", response_model=ChatResponse, summary="Postavi pitanje",
-          responses={400: {"description": "Prazno ili predugo pitanje"}})
+          responses={400: {"description": "Prazno ili predugo pitanje"},
+                     503: {"description": "LLM nije dostupan ili nije odgovorio na vreme"}})
 def chat(request: ChatRequest):
     question = request.question.strip()
     if not question:
@@ -84,7 +74,11 @@ def chat(request: ChatRequest):
             seen.add(r["heading_path"])
             sources.append(Source(title=r["title"], heading_path=r["heading_path"],
                                   url=r["url"], score=round(r["score"], 4)))
-    return ChatResponse(answer=format_answer(results), sources=sources, refused=False)
+    try:
+        answer = llm.generate_answer(question, results)
+    except llm.LLMError as e:
+        raise HTTPException(status_code=503, detail=str(e))
+    return ChatResponse(answer=answer, sources=sources, refused=False)
 
 
 @app.get("/health", response_model=HealthResponse, summary="Status servera i modela")
@@ -92,9 +86,10 @@ def health():
     retriever = state.get("retriever")
     if retriever is None:
         raise HTTPException(status_code=503, detail="Indeks jos nije ucitan.")
+    llm_status = llm.status()
     return HealthResponse(
-        status="ok",
+        status="ok" if llm_status["status"] == "ok" else "degraded",
         index={"chunks": retriever.index.ntotal, "embedding_model": retriever.model_name},
-        llm="not configured (dodaje se u 2. nedelji)",
+        llm=llm_status,
         uptime_seconds=int(time.time() - state["started"]),
     )

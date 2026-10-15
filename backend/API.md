@@ -11,12 +11,21 @@ Iz foldera `SE_praksa`, sa aktivnim `.venv`:
 python -m uvicorn app.main:app --app-dir backend --port 8000
 ```
 
-Pre prvog pokretanja mora postojati indeks (`python backend/ingestion/build_index.py`).
-Model i indeks se učitavaju jednom, pri startu (oko 10 s).
+Pre prvog pokretanja mora postojati indeks (`python backend/ingestion/build_index.py`) i mora raditi
+[Ollama](https://ollama.com) sa preuzetim modelom (`ollama pull llama3`).
+Embedding model i indeks se učitavaju jednom, pri startu (oko 10 s).
+
+| Promenljiva okruženja | Podrazumevano | Opis |
+| --- | --- | --- |
+| `OLLAMA_URL` | `http://localhost:11434` | Adresa Ollama servera |
+| `OLLAMA_MODEL` | `llama3` | Model koji piše odgovor |
+| `LLM_TIMEOUT` | `300` | Najduže čekanje na model, u sekundama |
 
 ## `POST /chat`
 
-Postavlja pitanje. U ovoj verziji (1. nedelja) vraća 3 najrelevantnije sekcije dokumentacije, bez LLM-a.
+Postavlja pitanje. Server pronađe 3 najrelevantnije sekcije dokumentacije, a lokalni LLM (Ollama, llama3 8B)
+iz njih napiše odgovor u Markdown-u, sa citatima u obliku `[1]`, `[2]` koji odgovaraju redosledu pronađenih sekcija.
+Na računaru bez grafičke kartice odgovor stiže za 30 s do 4 min.
 
 **Zahtev**
 
@@ -28,7 +37,7 @@ Postavlja pitanje. U ovoj verziji (1. nedelja) vraća 3 najrelevantnije sekcije 
 
 ```json
 {
-  "answer": "### 1. Format specification\n*Grid exchange formats > CIM-CGMES > Format specification*\n\nCurrent supported versions of CGMES are 2.4.15 and 3.0. ...\n\n[Izvor](https://powsybl.readthedocs.io/...)\n\n---\n\n### 2. ...",
+  "answer": "Current supported versions of CGMES are 2.4.15 and 3.0. [1]",
   "sources": [
     {
       "title": "Format specification",
@@ -53,6 +62,8 @@ Postavlja pitanje. U ovoj verziji (1. nedelja) vraća 3 najrelevantnije sekcije 
 | --- | --- | --- |
 | `400` | Prazno pitanje (ili samo razmaci) | `Pitanje ne sme biti prazno.` |
 | `400` | Pitanje duže od 1000 karaktera | `Pitanje je predugo (1001 karaktera, dozvoljeno 1000).` |
+| `503` | Ollama nije pokrenuta | `Ollama nije dostupna na http://localhost:11434 (...)` |
+| `503` | Model nije odgovorio na vreme | `Model nije odgovorio za 300 s.` |
 | `422` | Telo zahteva nije ispravan JSON ili nema polje `question` | (FastAPI validaciona greška) |
 
 ## `GET /health`
@@ -63,9 +74,10 @@ Status servera, indeksa i modela.
 {
   "status": "ok",
   "index": { "chunks": 804, "embedding_model": "BAAI/bge-small-en-v1.5" },
-  "llm": "not configured (dodaje se u 2. nedelji)",
+  "llm": { "status": "ok", "model": "llama3", "url": "http://localhost:11434" },
   "uptime_seconds": 42
 }
 ```
 
-Vraća `503` ako indeks još nije učitan.
+`status` je `degraded` kada Ollama ne radi (`llm.status`: `unavailable`) ili model nije preuzet
+(`model not pulled`). Vraća `503` ako indeks još nije učitan.
