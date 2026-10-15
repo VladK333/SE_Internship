@@ -1,10 +1,15 @@
-"""Pravi PDF izvestaja o napretku iz DocPilot_napredak.md.
+"""Pravi PDF iz Markdown dokumenta (podrazumevano izvestaj o napretku).
 
 Markdown -> HTML (markdown-it-py) -> PDF (Chrome ili Edge u headless rezimu).
-Pokretanje (iz SE_praksa):  python docs/progress/build_pdf.py
+Pokretanje (iz SE_praksa):
+  python docs/progress/build_pdf.py                                   # izvestaj o napretku
+  python docs/progress/build_pdf.py docs/research/Markdown_biblioteke.md  # bilo koji .md -> .pdf pored njega
 """
+import html as html_lib
 import pathlib
+import re
 import shutil
+import sys
 import subprocess
 import tempfile
 
@@ -23,7 +28,7 @@ BROWSERS = [
 CSS = """
 @page {
   size: A4; margin: 18mm 18mm 20mm 18mm;
-  @bottom-left { content: "DocPilot — izveštaj o napretku"; font: 8pt Arial; color: #777; }
+  @bottom-left { content: "__FOOTER__"; font: 8pt Arial; color: #777; }
   @bottom-right { content: "strana " counter(page) " / " counter(pages); font: 8pt Arial; color: #777; }
 }
 body { font-family: Arial, sans-serif; font-size: 10pt; line-height: 1.45; color: #222; }
@@ -35,13 +40,14 @@ p { margin: 0 0 6pt; }
 ul, ol { margin: 0 0 6pt; padding-left: 18pt; }
 li { margin: 0 0 2pt; }
 code { font-family: Consolas, monospace; font-size: 9pt; color: #8B2252; }
-pre { background: #F3F4F6; padding: 6pt 8pt; border-radius: 3pt; break-inside: avoid; }
+pre { background: #F3F4F6; padding: 6pt 8pt; border-radius: 3pt; break-inside: avoid; white-space: pre-wrap; word-break: break-all; }
 pre code { color: #222; font-size: 8.5pt; }
 table { border-collapse: collapse; width: 100%; margin: 0 0 8pt; font-size: 9.5pt; }
 tr { break-inside: avoid; }
 th { background: #1F3A5F; color: white; text-align: left; padding: 3pt 6pt; }
 td { padding: 3pt 6pt; border: 1px solid #C9CED6; vertical-align: top; }
 tr:nth-child(even) td { background: #F7F8FA; }
+img { max-width: 100%; }
 """
 
 
@@ -52,10 +58,15 @@ def find_browser():
     return shutil.which("chrome") or shutil.which("msedge")
 
 
-def main():
-    md = MarkdownIt("commonmark").enable("table")
-    body = md.render(SRC.read_text(encoding="utf-8"))
-    html = f'<!doctype html><html lang="sr"><head><meta charset="utf-8"><style>{CSS}</style></head><body>{body}</body></html>'
+def main(src=SRC, out=OUT):
+    text = src.read_text(encoding="utf-8")
+    title = re.search(r"^# (.+)$", text, re.M)
+    footer = html_lib.escape(title.group(1) if title else src.stem).replace('"', "'")
+    body = MarkdownIt("commonmark").enable("table").render(text)
+    # <base> da bi relativne putanje slika radile iz privremenog foldera
+    html = (f'<!doctype html><html lang="sr"><head><meta charset="utf-8">'
+            f'<base href="{src.parent.as_uri()}/"><style>{CSS.replace("__FOOTER__", footer)}</style></head>'
+            f'<body>{body}</body></html>')
 
     browser = find_browser()
     if not browser:
@@ -70,11 +81,15 @@ def main():
         if not pdf.exists():
             raise SystemExit(f"PDF nije napravljen ({browser}).")
         try:
-            shutil.copyfile(pdf, OUT)
+            shutil.copyfile(pdf, out)
         except PermissionError:
-            raise SystemExit(f"{OUT.name} je otvoren u drugom programu. Zatvori ga i pokreni ponovo.")
-    print(f"Gotovo: {OUT}")
+            raise SystemExit(f"{out.name} je otvoren u drugom programu. Zatvori ga i pokreni ponovo.")
+    print(f"Gotovo: {out}")
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        source = pathlib.Path(sys.argv[1]).resolve()
+        main(source, source.with_suffix(".pdf"))
+    else:
+        main()

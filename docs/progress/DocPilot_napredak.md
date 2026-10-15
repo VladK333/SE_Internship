@@ -14,8 +14,8 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Ingestion: chunkovanje i metapodaci | Završeno |
 | 1 | Embeddings i FAISS indeks | Završeno |
 | 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
-| 1 | Istraživanje Markdown biblioteka za WPF | Sledeće |
-| 2 | LLM i guardrails | Nije počelo |
+| 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
+| 2 | LLM i guardrails | Sledeće |
 | 2 | WPF klijent (.NET Framework 4.8) | Nije počelo |
 | 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
 
@@ -206,6 +206,23 @@ Svaki izvor u `sources[]` sadrži naslov, putanju naslova, URL sekcije na readth
 python -m uvicorn app.main:app --app-dir backend --port 8000
 ```
 
+## 7. Istraživanje Markdown biblioteka
+
+**Dokument:** `docs/research/Markdown_biblioteke.pdf` (poređenje, izbor, screenshot-ovi) · **Test aplikacija:** `frontend/MarkdownResearch` · **Test fajl:** `docs/research/test.md`
+
+Upoređene su četiri biblioteke tako što je isti test fajl (naslovi, ugnežđene liste, tabele, kod, PNG i SVG slike, HTTP slika, sirovi HTML, linkovi) prikazan u svakoj od njih u istoj net48 WPF aplikaciji. Aplikacija sama pravi screenshot celog sadržaja i meri koliko dugo je UI nit blokirana pri prikazu dugog odgovora.
+
+| Biblioteka | Ukupno (od 50) | Glavni nalaz |
+| --- | --- | --- |
+| MdXaml 1.27.0 | 33 | Pogrešno čita ugnežđene liste uvučene sa 2–3 razmaka; sa SVG dodatkom gubi stil naslova |
+| Markdig.Wpf 0.5.0.1 | 33 | Ispravan prikaz, ali bez SVG-a i bojenja koda; repozitorijum arhiviran |
+| Neo.Markdig.Xaml 1.0.10 | 35 | Kao Markdig.Wpf, najbrža FlowDocument opcija; bez SVG-a i bojenja koda |
+| **Markdig 1.4.0 + WebView2** | **49** | Sve ispravno, uključujući SVG i bojenje koda; HTTP slika blokirana preko CSP-a; UI blokiran samo 3–26 ms |
+
+**Izbor:** Markdig + WebView2. Jedina opcija koja je ispravno prikazala ceo test fajl, ne zamrzava UI i ima standardne mehanizme za bezbedan prikaz (`DisableHtml()` i Content-Security-Policy sa listom dozvoljenih izvora slika). Cena izbora (WebView2 Runtime, x64 build, „airspace“ ograničenja) i način na koji se rešava opisani su u dokumentu istraživanja.
+
+![Poređenje biblioteka](../research/screenshots/comparison_top.png)
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -217,3 +234,4 @@ python -m uvicorn app.main:app --app-dir backend --port 8000
 | 11.10.2026. | Uveden ovaj izveštaj o napretku |
 | 11.10.2026. | Embeddings (bge-small-en-v1.5) i FAISS indeks, modul za pretragu |
 | 15.10.2026. | HTTP API (FastAPI): `POST /chat` sa top 3 sekcije, `GET /health`, provera ulaza, dokumentacija API-ja |
+| 15.10.2026. | Istraživanje Markdown biblioteka (4 kandidata, screenshot-ovi, merenja); izabrano Markdig + WebView2 |
