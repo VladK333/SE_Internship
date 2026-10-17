@@ -1,3 +1,4 @@
+import os
 import time
 from contextlib import asynccontextmanager
 
@@ -9,6 +10,10 @@ from app.retriever import Retriever
 
 TOP_K = 3
 MAX_QUESTION_LENGTH = 1000
+# guardrail 2: ispod ovog skora pitanje se odbija bez poziva LLM-u
+# (odredjeno u backend/evaluation/calibrate_threshold.py)
+REFUSAL_THRESHOLD = float(os.getenv("REFUSAL_THRESHOLD", "0.70"))
+REFUSAL_MESSAGE = "Not covered in the documentation."
 
 state = {}
 
@@ -68,6 +73,9 @@ def chat(request: ChatRequest):
                             detail=f"Pitanje je predugo ({len(question)} karaktera, dozvoljeno {MAX_QUESTION_LENGTH}).")
 
     results = state["retriever"].search(question, k=TOP_K)
+    if not results or results[0]["score"] < REFUSAL_THRESHOLD:
+        return ChatResponse(answer=REFUSAL_MESSAGE, sources=[], refused=True)
+
     sources, seen = [], set()
     for r in results:
         if r["heading_path"] not in seen:     # vise delova iste sekcije = jedan izvor
@@ -78,6 +86,9 @@ def chat(request: ChatRequest):
         answer = llm.generate_answer(question, results)
     except llm.LLMError as e:
         raise HTTPException(status_code=503, detail=str(e))
+    if answer.startswith(REFUSAL_MESSAGE.rstrip(".")):
+        # pretraga je prosla prag, ali model u sekcijama nije nasao odgovor
+        return ChatResponse(answer=REFUSAL_MESSAGE, sources=[], refused=True)
     return ChatResponse(answer=answer, sources=sources, refused=False)
 
 

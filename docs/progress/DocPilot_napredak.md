@@ -15,7 +15,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Embeddings i FAISS indeks | Završeno |
 | 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
-| 2 | LLM i guardrails | U toku (LLM gotov, guardrail 2 sledeći) |
+| 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
 | 2 | WPF klijent (.NET Framework 4.8) | Nije počelo |
 | 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
 
@@ -258,6 +258,41 @@ Sekcije i pitanje su u poruci odvojeni oznakama `<<<` i `>>>`, da bi model jasno
 
 **Sledeće:** guardrail 2 (odbijanje bez poziva modelu kada je najbolji skor ispod praga) i `refused: true`. Pitanje van teme sada odbija sam model, ali tek posle ~55 s; sa pragom će odbijanje biti trenutno.
 
+## 9. Guardrail 2: odbijanje kada je pretraga slaba
+
+**Kod:** `backend/app/main.py` · **Kalibracija:** `backend/evaluation/calibrate_threshold.py`, `calibration_questions.json`, `calibration_results.json`
+
+**Kako radi:** ako je najbolji skor pretrage ispod praga, `/chat` odmah vraća „Not covered in the documentation.“, `refused: true` i praznu listu izvora, **bez poziva LLM-u**. Drugi nivo zaštite: ako pretraga prođe prag, ali model u sekcijama ne nađe odgovor i napiše istu rečenicu, i to se vraća kao `refused: true`. Prag se može promeniti promenljivom okruženja `REFUSAL_THRESHOLD`.
+
+**Određivanje praga:** napravljen je poseban skup od 28 pitanja na koja dokumentacija odgovara i 25 pitanja na koja ne odgovara (opšta pitanja, druge tehnologije, elektroenergetika van dokumentacije, pokušaj prompt injection-a). Skup je namerno odvojen od evaluacionog skupa iz 3. nedelje, da se prag ne bi podešavao na pitanjima na kojima se meri.
+
+| Grupa | Najmanji skor | Najveći skor |
+| --- | --- | --- |
+| Pitanja sa odgovorom (28) | 0.717 | 0.895 |
+| Pitanja bez odgovora (25) | 0.417 | 0.683 |
+
+| Prag | Pogrešno odbijeno | Pogrešno pušteno do LLM-a |
+| --- | --- | --- |
+| 0.65 | 0 | 2 |
+| 0.68 | 0 | 1 |
+| **0.70** | **0** | **0** |
+| 0.72 | 1 | 0 |
+
+Pragovi od 0.69 do 0.71 savršeno razdvajaju ove dve grupe; izabran je **0.70**, sredina razmaka, kao najotporniji. Razmak je ipak mali (0.683 naspram 0.717): najbliže granici je pitanje o IEC 61850 protokolu, tematski blisko dokumentaciji. Takva pitanja mogu proći prag, pa tada odbijanje radi drugi nivo, sam model.
+
+**Test** (sa lažnim modelom koji beleži pozive):
+
+| Pitanje | Rezultat | Vreme | LLM pozvan |
+| --- | --- | --- | --- |
+| What is the capital of France? | `refused: true` | 21 ms | ne |
+| How do I install Kubernetes on Ubuntu? | `refused: true` | 14 ms | ne |
+| Which CGMES versions are supported? | odgovor + 3 izvora | — | da |
+| Pitanje koje prođe prag, a model ga odbije | `refused: true`, bez izvora | — | da |
+
+Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sada se odbija za oko 15 ms.
+
+**Pokretanje kalibracije:** `python backend/evaluation/calibrate_threshold.py`
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -271,3 +306,4 @@ Sekcije i pitanje su u poruci odvojeni oznakama `<<<` i `>>>`, da bi model jasno
 | 15.10.2026. | HTTP API (FastAPI): `POST /chat` sa top 3 sekcije, `GET /health`, provera ulaza, dokumentacija API-ja |
 | 15.10.2026. | Istraživanje Markdown biblioteka (4 kandidata, screenshot-ovi, merenja); izabrano Markdig + WebView2 |
 | 15.10.2026. | LLM (llama3 8B preko Ollama) piše odgovor iz top 3 sekcije; prompt za odgovore samo iz dokumentacije i citate; `/health` proverava LLM |
+| 17.10.2026. | Guardrail 2: odbijanje bez poziva LLM-u ispod praga 0.70 (kalibrisano na 53 pitanja); odbijanje modela se vraća kao `refused: true` |

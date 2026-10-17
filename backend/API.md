@@ -20,6 +20,7 @@ Embedding model i indeks se učitavaju jednom, pri startu (oko 10 s).
 | `OLLAMA_URL` | `http://localhost:11434` | Adresa Ollama servera |
 | `OLLAMA_MODEL` | `llama3` | Model koji piše odgovor |
 | `LLM_TIMEOUT` | `300` | Najduže čekanje na model, u sekundama |
+| `REFUSAL_THRESHOLD` | `0.70` | Najmanji skor sličnosti da bi pitanje stiglo do modela |
 
 ## `POST /chat`
 
@@ -54,7 +55,15 @@ Na računaru bez grafičke kartice odgovor stiže za 30 s do 4 min.
 | --- | --- | --- |
 | `answer` | string | Odgovor u Markdown-u (naslovi, tekst, tabele, kod, slike sa HTTPS adresa, linkovi) |
 | `sources` | niz | Korišćene sekcije: naslov, putanja naslova, URL, skor sličnosti (0–1) |
-| `refused` | bool | `true` kada sistem odbije da odgovori (guardrail iz 2. nedelje); sada uvek `false` |
+| `refused` | bool | `true` kada sistem odbije da odgovori; tada je `answer` = `Not covered in the documentation.`, a `sources` prazan |
+
+**Odbijanje (guardrail 2).** Ako je najbolji skor pretrage manji od `REFUSAL_THRESHOLD`, server odmah vraća
+odbijanje, **bez poziva modelu** (odgovor za ~15 ms). Ako pretraga prođe prag, ali model u sekcijama ne nađe
+odgovor i napiše „Not covered in the documentation.“, i to se vraća kao `refused: true`.
+
+```json
+{ "answer": "Not covered in the documentation.", "sources": [], "refused": true }
+```
 
 **Greške**
 
