@@ -16,7 +16,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
 | 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
-| 2 | WPF klijent (.NET Framework 4.8) | Nije počelo |
+| 2 | WPF klijent (.NET Framework 4.8) | U toku (napravljen projekat) |
 | 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
 
 ## Arhitektura i struktura projekta
@@ -307,3 +307,4 @@ Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sa
 | 15.10.2026. | Istraživanje Markdown biblioteka (4 kandidata, screenshot-ovi, merenja); izabrano Markdig + WebView2 |
 | 15.10.2026. | LLM (llama3 8B preko Ollama) piše odgovor iz top 3 sekcije; prompt za odgovore samo iz dokumentacije i citate; `/health` proverava LLM |
 | 17.10.2026. | Guardrail 2: odbijanje bez poziva LLM-u ispod praga 0.70 (kalibrisano na 53 pitanja); odbijanje modela se vraća kao `refused: true` |
+| 19.10.2026. | WPF klijent: SDK-style projekat `frontend/DocPilot.Client` (net48, x64, Markdig + WebView2) i `frontend/DocPilot.sln` |
