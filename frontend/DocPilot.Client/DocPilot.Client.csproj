@@ -15,6 +15,12 @@
     <!-- izabrano u istrazivanju: docs/research/Markdown_biblioteke.pdf -->
     <PackageReference Include="Markdig" Version="1.4.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4258.31" />
+    <PackageReference Include="System.Text.Json" Version="10.0.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
 
 </Project>

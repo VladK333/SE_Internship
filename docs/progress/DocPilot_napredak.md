@@ -293,6 +293,41 @@ Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sa
 
 **Pokretanje kalibracije:** `python backend/evaluation/calibrate_threshold.py`
 
+## 10. WPF klijent: projekat i komunikacija sa serverom
+
+**Projekat:** `frontend/DocPilot.Client` (SDK-style, `net48`, WPF, x64), solution `frontend/DocPilot.sln` · **Paketi:** Markdig, Microsoft.Web.WebView2 (izbor iz istraživanja), System.Text.Json
+
+**Struktura do sada:**
+
+```
+DocPilot.Client/
+├── App.config              adresa servera i timeout
+├── Models/                 ChatRequest, ChatResponse, Source, HealthResponse (ugovor API-ja)
+└── Services/
+    ├── IChatApiClient.cs   interfejs (za MVVM i testiranje)
+    ├── ChatApiClient.cs    HttpClient, async/await: AskAsync(), GetHealthAsync()
+    └── ChatApiException.cs vrsta greške + poruka za korisnika
+```
+
+**Greške i timeout-i:** servis svaku grešku pretvara u poruku spremnu za prikaz, kako specifikacija traži („Clear error messages when the server is down or times out“). Vreme se meri preko `CancellationToken`-a, pa se razlikuje isteklo vreme od otkazivanja koje traži korisnik. Timeout za `/chat` je 330 s, malo duže od serverskog limita za LLM (300 s), da bi server prvi javio da model kasni; za `/health` je 5 s.
+
+**Provera na pravom serveru:**
+
+| Situacija | Rezultat u klijentu | Vreme |
+| --- | --- | --- |
+| `/health`, sve radi | `ok`, 804 chunka, llama3 `ok` | 0,4 s |
+| Pitanje van teme | `refused: true`, bez izvora | 66 ms |
+| Prazno pitanje / 1001 znak | `InvalidRequest`: poruka sa servera | < 30 ms |
+| Pravo pitanje | odgovor sa citatom `[1]` i 3 izvora | 48 s |
+| Isteklo vreme (klijent podešen na 3 s) | `Timeout`: „Server nije odgovorio za 3 s. Model je možda preopterećen…“ | 3 s |
+| Korisnik otkazao | otkazivanje, bez poruke o grešci | 2 s |
+| Ollama ne radi | `/health`: `degraded`; pitanje: `503` sa porukom servera | 2,4 s |
+| Server nije pokrenut | `ServerUnavailable`: „Server nije dostupan na http://127.0.0.1:8000/. Proveri da li je backend pokrenut.“ | 2,1 s |
+
+**Usput pronađeno i ispravljeno:** na Windows-u adresa `localhost` prvo pokušava IPv6 (`::1`), na kome ni server ni Ollama ne slušaju, pa svaki poziv gubi oko 2 s. U klijentu i na serveru (adresa Ollama-e) sada se koristi `127.0.0.1`; `/health` je ubrzan sa 4,5 s na 0,4 s.
+
+**Sledeće:** ViewModel (lista poruka, komanda za slanje, indikator učitavanja).
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -308,3 +343,4 @@ Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sa
 | 15.10.2026. | LLM (llama3 8B preko Ollama) piše odgovor iz top 3 sekcije; prompt za odgovore samo iz dokumentacije i citate; `/health` proverava LLM |
 | 17.10.2026. | Guardrail 2: odbijanje bez poziva LLM-u ispod praga 0.70 (kalibrisano na 53 pitanja); odbijanje modela se vraća kao `refused: true` |
 | 19.10.2026. | WPF klijent: SDK-style projekat `frontend/DocPilot.Client` (net48, x64, Markdig + WebView2) i `frontend/DocPilot.sln` |
+| 23.10.2026. | WPF klijent: modeli i servis za API (HttpClient, timeout-i, poruke o greškama); `127.0.0.1` umesto `localhost` (−2 s po pozivu) |

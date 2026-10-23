@@ -17,7 +17,7 @@ Embedding model i indeks se učitavaju jednom, pri startu (oko 10 s).
 
 | Promenljiva okruženja | Podrazumevano | Opis |
 | --- | --- | --- |
-| `OLLAMA_URL` | `http://localhost:11434` | Adresa Ollama servera |
+| `OLLAMA_URL` | `http://127.0.0.1:11434` | Adresa Ollama servera |
 | `OLLAMA_MODEL` | `llama3` | Model koji piše odgovor |
 | `LLM_TIMEOUT` | `300` | Najduže čekanje na model, u sekundama |
 | `REFUSAL_THRESHOLD` | `0.70` | Najmanji skor sličnosti da bi pitanje stiglo do modela |
@@ -71,7 +71,7 @@ odgovor i napiše „Not covered in the documentation.“, i to se vraća kao `r
 | --- | --- | --- |
 | `400` | Prazno pitanje (ili samo razmaci) | `Pitanje ne sme biti prazno.` |
 | `400` | Pitanje duže od 1000 karaktera | `Pitanje je predugo (1001 karaktera, dozvoljeno 1000).` |
-| `503` | Ollama nije pokrenuta | `Ollama nije dostupna na http://localhost:11434 (...)` |
+| `503` | Ollama nije pokrenuta | `Ollama nije dostupna na http://127.0.0.1:11434 (...)` |
 | `503` | Model nije odgovorio na vreme | `Model nije odgovorio za 300 s.` |
 | `422` | Telo zahteva nije ispravan JSON ili nema polje `question` | (FastAPI validaciona greška) |
 
@@ -83,7 +83,7 @@ Status servera, indeksa i modela.
 {
   "status": "ok",
   "index": { "chunks": 804, "embedding_model": "BAAI/bge-small-en-v1.5" },
-  "llm": { "status": "ok", "model": "llama3", "url": "http://localhost:11434" },
+  "llm": { "status": "ok", "model": "llama3", "url": "http://127.0.0.1:11434" },
   "uptime_seconds": 42
 }
 ```
