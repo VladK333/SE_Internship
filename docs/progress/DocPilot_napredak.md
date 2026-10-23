@@ -375,6 +375,26 @@ Odbijena pitanja su prikazana sivim kurzivom. Prazan chat prikazuje kratko uputs
 
 **Ograničenje:** odgovor je za sada prikazan kao običan tekst; Markdown prikaz (Markdig + WebView2, sa bezbednim prikazom iz guardrail-a 6) je sledeći korak.
 
+### Markdown u bezbedan HTML (guardrail 6, deo 1)
+
+**Kod:** `Rendering/MarkdownRenderer.cs` · **Fajlovi stranice:** `Assets/docpilot.css`, `Assets/docpilot.js`, `Assets/highlight/` (highlight.js 11.9.0, BSD-3, spakovan u aplikaciju umesto učitavanja sa interneta)
+
+Odgovor se pretvara u kompletnu HTML stranicu za WebView2. Bezbednost je u tri sloja:
+
+| Sloj | Šta radi |
+| --- | --- |
+| Markdig `DisableHtml()` | sirovi HTML iz odgovora (`<script>`, `<img onerror>`, `<b>`) prikazuje se kao tekst |
+| Provera stabla dokumenta | slike samo sa `https://powsybl.readthedocs.io` i `https://www.powsybl.org`, ostale se zamene kratkom porukom; linkovi samo HTTPS (`javascript:`, `file:`, `data:` postaju običan tekst) |
+| Content-Security-Policy | skripte i stilovi samo iz paketa aplikacije, slike samo sa pouzdanih izvora |
+
+Markdig ekstenzije su izabrane pojedinačno (tabele, liste, automatski linkovi) umesto `UseAdvancedExtensions()`, jer ono uključuje i *GenericAttributes*, kojim bi tekst odgovora mogao da doda proizvoljne HTML atribute (npr. `{onclick=...}`).
+
+Citati `[1]`, `[2]` u tekstu postaju linkovi ka odgovarajućim izvorima (sa putanjom naslova kao tooltip), osim unutar koda. Široke tabele dobijaju horizontalni skrol.
+
+**Provera:** 20 automatskih provera nad namerno zlonamernim Markdown-om i nad test fajlom iz istraživanja: sve prolaze. Test je otkrio i ispravio jednu grešku (posle uklanjanja nebezbednog linka tekst se duplirao).
+
+**Sledeće (deo 2):** prikaz ove stranice u balončiću odgovora preko WebView2.
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -393,3 +413,4 @@ Odbijena pitanja su prikazana sivim kurzivom. Prazan chat prikazuje kratko uputs
 | 23.10.2026. | WPF klijent: modeli i servis za API (HttpClient, timeout-i, poruke o greškama); `127.0.0.1` umesto `localhost` (−2 s po pozivu) |
 | 23.10.2026. | WPF klijent: MVVM osnova (ViewModelBase, komande, MessageViewModel) i ChatViewModel (slanje, otkazivanje, status servera) |
 | 23.10.2026. | WPF klijent: izgled prozora (lista poruka, unos, Enter / Shift+Enter, indikator učitavanja, status servera, izvori kao linkovi) |
+| 24.10.2026. | Klijent: Markdown → bezbedan HTML (DisableHtml, provera linkova i slika, CSP), citati kao linkovi, lokalni highlight.js |
