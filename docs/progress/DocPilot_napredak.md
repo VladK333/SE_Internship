@@ -293,7 +293,7 @@ Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sa
 
 **Pokretanje kalibracije:** `python backend/evaluation/calibrate_threshold.py`
 
-## 10. WPF klijent: projekat i komunikacija sa serverom
+## 10. WPF klijent: projekat, komunikacija sa serverom i ViewModel
 
 **Projekat:** `frontend/DocPilot.Client` (SDK-style, `net48`, WPF, x64), solution `frontend/DocPilot.sln` · **Paketi:** Markdig, Microsoft.Web.WebView2 (izbor iz istraživanja), System.Text.Json
 
@@ -326,7 +326,35 @@ DocPilot.Client/
 
 **Usput pronađeno i ispravljeno:** na Windows-u adresa `localhost` prvo pokušava IPv6 (`::1`), na kome ni server ni Ollama ne slušaju, pa svaki poziv gubi oko 2 s. U klijentu i na serveru (adresa Ollama-e) sada se koristi `127.0.0.1`; `/health` je ubrzan sa 4,5 s na 0,4 s.
 
-**Sledeće:** ViewModel (lista poruka, komanda za slanje, indikator učitavanja).
+### MVVM: ViewModel
+
+```
+DocPilot.Client/ViewModels/
+├── ViewModelBase.cs      INotifyPropertyChanged + SetProperty
+├── RelayCommand.cs       RelayCommand i AsyncRelayCommand (onemogućena dok traje)
+├── MessageViewModel.cs   poruka: pitanje, odgovor sa izvorima, odbijeno, greška
+└── ChatViewModel.cs      stanje i logika chata
+```
+
+MVVM je urađen bez dodatnih biblioteka, jer je dovoljno nekoliko malih klasa.
+
+**`ChatViewModel`:** lista poruka (`Messages`, najnovija na dnu), tekst pitanja (`Question`), `SendCommand`, `CancelCommand`, indikator učitavanja (`IsBusy`) i status servera (`ServerStatus`, preko `/health` pri pokretanju). Slanje je onemogućeno dok se čeka odgovor, kada je polje prazno i kada pitanje ima više od 1000 znakova (isto ograničenje kao na serveru). Nijedna greška ne izlazi iz komande, nego postaje poruka u listi, pa ne može da sruši aplikaciju.
+
+**Provera na pravom serveru** (test program poziva komande bez prozora):
+
+| Situacija | Rezultat |
+| --- | --- |
+| Pokretanje, server radi | status „Server radi · llama3“ |
+| Prazno pitanje / 1001 znak | dugme Send onemogućeno |
+| Pitanje van teme | poruke: pitanje + „odbijeno“; polje ispražnjeno; `IsBusy` true → false |
+| Tokom čekanja | Send onemogućen, Cancel omogućen |
+| Otkazivanje | poruka „Pitanje je otkazano.“ |
+| Pravo pitanje | odgovor sa `[1]` i 3 izvora |
+| Server ugašen | status i poruka „Server nije dostupan na …“ |
+
+Napomena: otkazivanje prekida čekanje u klijentu, ali server i dalje završava odgovor modela u pozadini.
+
+**Sledeće:** izgled prozora (lista poruka, polje za unos, Enter / Shift+Enter) i povezivanje sa ViewModel-om.
 
 ## Dnevnik izmena
 
@@ -344,3 +372,4 @@ DocPilot.Client/
 | 17.10.2026. | Guardrail 2: odbijanje bez poziva LLM-u ispod praga 0.70 (kalibrisano na 53 pitanja); odbijanje modela se vraća kao `refused: true` |
 | 19.10.2026. | WPF klijent: SDK-style projekat `frontend/DocPilot.Client` (net48, x64, Markdig + WebView2) i `frontend/DocPilot.sln` |
 | 23.10.2026. | WPF klijent: modeli i servis za API (HttpClient, timeout-i, poruke o greškama); `127.0.0.1` umesto `localhost` (−2 s po pozivu) |
+| 23.10.2026. | WPF klijent: MVVM osnova (ViewModelBase, komande, MessageViewModel) i ChatViewModel (slanje, otkazivanje, status servera) |
