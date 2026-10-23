@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DocPilot.Client.Models;
 using DocPilot.Client.Services;
 
@@ -28,6 +29,9 @@ namespace DocPilot.Client.ViewModels
         /// Izvori ispod odgovora; prazno za ostale vrste poruka.
         public IReadOnlyList<Source> Sources { get; }
 
+        /// Izvori sa brojevima za prikaz ([1] Naslov, [2] ...).
+        public IReadOnlyList<SourceLinkViewModel> SourceLinks { get; }
+
         public DateTime Time { get; }
 
         public bool IsUser => Kind == MessageKind.User;
@@ -38,6 +42,7 @@ namespace DocPilot.Client.ViewModels
             Kind = kind;
             Text = text;
             Sources = sources ?? Array.Empty<Source>();
+            SourceLinks = Sources.Select((s, i) => new SourceLinkViewModel(i + 1, s)).ToList();
             Time = DateTime.Now;
         }
 

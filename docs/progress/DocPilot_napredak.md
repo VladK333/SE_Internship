@@ -293,7 +293,7 @@ Pre ovog guardrail-a pitanje van teme čekalo je oko 55 s da ga odbije model; sa
 
 **Pokretanje kalibracije:** `python backend/evaluation/calibrate_threshold.py`
 
-## 10. WPF klijent: projekat, komunikacija sa serverom i ViewModel
+## 10. WPF klijent
 
 **Projekat:** `frontend/DocPilot.Client` (SDK-style, `net48`, WPF, x64), solution `frontend/DocPilot.sln` · **Paketi:** Markdig, Microsoft.Web.WebView2 (izbor iz istraživanja), System.Text.Json
 
@@ -354,7 +354,26 @@ MVVM je urađen bez dodatnih biblioteka, jer je dovoljno nekoliko malih klasa.
 
 Napomena: otkazivanje prekida čekanje u klijentu, ali server i dalje završava odgovor modela u pozadini.
 
-**Sledeće:** izgled prozora (lista poruka, polje za unos, Enter / Shift+Enter) i povezivanje sa ViewModel-om.
+### Izgled prozora
+
+**Kod:** `MainWindow.xaml` (izgled, binding na `ChatViewModel`), `MainWindow.xaml.cs` (samo ponašanje prikaza), `App.xaml` (boje i stilovi), `App.xaml.cs` (povezivanje servisa, ViewModel-a i prozora)
+
+| Zahtev iz specifikacije | Kako je urađeno |
+| --- | --- |
+| Lista poruka, najnovija na dnu | pitanja desno (tamno), odgovori levo (belo); automatski skrol na dno |
+| Polje za unos i dugme Send | dugme onemogućeno kada je polje prazno, pitanje predugo ili se čeka odgovor; brojač znakova „n / 1000“ |
+| Enter šalje, Shift+Enter novi red | proveren automatizovanim testom (UI Automation) |
+| Indikator učitavanja, UI se ne zamrzava | traka sa porukom i dugmetom „Otkaži“; sav rad sa serverom je async |
+| Jasne poruke o greškama | greške kao crvene poruke u listi; status servera u zaglavlju (zelena / crvena tačka) |
+| Izvori kao linkovi ispod odgovora | „[1] Naslov“, sa putanjom naslova kao tooltip; otvaraju se u browseru, i to samo HTTPS linkovi |
+
+Odbijena pitanja su prikazana sivim kurzivom. Prazan chat prikazuje kratko uputstvo sa primerima pitanja.
+
+![Klijent: odbijeno pitanje i odgovor sa izvorima](img/klijent_chat.png)
+
+**Usput ispravljeno:** pri prvom pokretanju aplikacija se odmah gasila zbog greške u XAML-u (broj dodeljen tekstualnom svojstvu). Dodat je i globalni hvatač neočekivanih grešaka, pa aplikacija u takvim slučajevima prikazuje poruku umesto da se tiho ugasi.
+
+**Ograničenje:** odgovor je za sada prikazan kao običan tekst; Markdown prikaz (Markdig + WebView2, sa bezbednim prikazom iz guardrail-a 6) je sledeći korak.
 
 ## Dnevnik izmena
 
@@ -373,3 +392,4 @@ Napomena: otkazivanje prekida čekanje u klijentu, ali server i dalje završava 
 | 19.10.2026. | WPF klijent: SDK-style projekat `frontend/DocPilot.Client` (net48, x64, Markdig + WebView2) i `frontend/DocPilot.sln` |
 | 23.10.2026. | WPF klijent: modeli i servis za API (HttpClient, timeout-i, poruke o greškama); `127.0.0.1` umesto `localhost` (−2 s po pozivu) |
 | 23.10.2026. | WPF klijent: MVVM osnova (ViewModelBase, komande, MessageViewModel) i ChatViewModel (slanje, otkazivanje, status servera) |
+| 23.10.2026. | WPF klijent: izgled prozora (lista poruka, unos, Enter / Shift+Enter, indikator učitavanja, status servera, izvori kao linkovi) |

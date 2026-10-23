@@ -25,6 +25,16 @@ SE_praksa/
 
 ## Pokretanje
 
+Potrebno: [Ollama](https://ollama.com) sa modelom `llama3` (`ollama pull llama3`) koji radi u pozadini.
+
+**1. Backend (VS Code):** otvori folder `SE_praksa` u VS Code-u i pritisni **F5** (konfiguracija „DocPilot backend“ u
+`.vscode/launch.json`). Server je spreman kada se u terminalu pojavi `Application startup complete`.
+API i interaktivna dokumentacija: `http://127.0.0.1:8000/docs` (opis u [backend/API.md](backend/API.md)).
+
+**2. Klijent (Visual Studio):** otvori `frontend/DocPilot.sln` i pritisni **F5**. Pokreće se projekat `DocPilot.Client`.
+
+### Priprema podataka (samo prvi put)
+
 Iz foldera `SE_praksa`:
 
 ```
@@ -33,10 +43,9 @@ pip install -r backend\requirements.txt
 python backend\ingestion\convert_pdf_to_md.py
 python backend\ingestion\chunk.py
 python backend\ingestion\build_index.py
-python -m uvicorn app.main:app --app-dir backend --port 8000
 ```
 
-API: `http://localhost:8000/docs` (opis u [backend/API.md](backend/API.md)).
+Backend bez VS Code-a: `python -m uvicorn app.main:app --app-dir backend --port 8000`
 
 ## Izvor dokumentacije
 

@@ -1,0 +1,18 @@
+{
+    // F5 u VS Code-u pokrece DocPilot backend (FastAPI + uvicorn) iz .venv okruzenja.
+    // Ollama mora da radi u pozadini (proveri sa: ollama list).
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "DocPilot backend",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": ["app.main:app", "--app-dir", "backend", "--port", "8000"],
+            "cwd": "${workspaceFolder}",
+            "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

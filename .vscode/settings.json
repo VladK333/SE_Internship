@@ -1,0 +1,4 @@
+{
+    // VS Code automatski koristi projektno virtuelno okruzenje
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe"
+}
