@@ -28,6 +28,15 @@
     }
   });
 
+  // stranica sama ne skroluje (visina = visina sadržaja); točkić se prosleđuje listi poruka.
+  // Shift+točkić ostaje stranici, za horizontalni skrol širokih tabela i koda.
+  document.addEventListener("wheel", function (e) {
+    if (!e.shiftKey && e.deltaY !== 0) {
+      e.preventDefault();
+      post({ type: "wheel", deltaY: e.deltaY });
+    }
+  }, { passive: false });
+
   document.addEventListener("DOMContentLoaded", function () {
     if (window.hljs) {
       window.hljs.highlightAll();

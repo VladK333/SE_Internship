@@ -16,7 +16,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
 | 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
-| 2 | WPF klijent (.NET Framework 4.8) | U toku (napravljen projekat) |
+| 2 | WPF klijent (.NET Framework 4.8) | Završeno |
 | 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
 
 ## Arhitektura i struktura projekta
@@ -393,7 +393,25 @@ Citati `[1]`, `[2]` u tekstu postaju linkovi ka odgovarajućim izvorima (sa puta
 
 **Provera:** 20 automatskih provera nad namerno zlonamernim Markdown-om i nad test fajlom iz istraživanja: sve prolaze. Test je otkrio i ispravio jednu grešku (posle uklanjanja nebezbednog linka tekst se duplirao).
 
-**Sledeće (deo 2):** prikaz ove stranice u balončiću odgovora preko WebView2.
+### Prikaz odgovora u WebView2 (guardrail 6, deo 2)
+
+**Kod:** `Controls/MarkdownView.cs`, šablon poruke u `MainWindow.xaml`
+
+Odgovori asistenta se prikazuju kroz kontrolu `MarkdownView`, a pitanja, odbijanja i greške ostaju običan tekst.
+
+- **`WebView2CompositionControl`** umesto običnog WebView2: iscrtava se kroz WPF, pa radi unutar liste poruka i skrolovanja bez „airspace“ problema opisanog u istraživanju. Sve instance dele jedno WebView2 okruženje (jedan Edge proces), a podaci WebView2 se čuvaju u korisničkom profilu (`%LOCALAPPDATA%\DocPilot`).
+- **Lokalni fajlovi** (CSS, JS, highlight.js) dostupni su stranici kao `https://docpilot.assets/` (virtuelni host), pa CSP može da dozvoli samo njih.
+- **Visina** balončića prati sadržaj: stranica javlja visinu aplikaciji, i ponovo kada se učitaju slike.
+- **Linkovi** (izvori, citati) se nikad ne otvaraju u balončiću: svaka navigacija se prekida, a HTTPS linkovi se otvaraju u podrazumevanom browseru.
+- **Točkić miša** iznad odgovora skroluje listu poruka; Shift+točkić ostaje za horizontalni skrol širokih tabela i koda.
+- **Podešavanja:** isključeni kontekstni meni, DevTools (osim pri debagovanju), zum i prečice browsera.
+- Ako WebView2 Runtime nije instaliran, odgovor se prikazuje kao običan tekst sa napomenom.
+
+**Provera sa pravim serverom:** odgovori sa listama, kodom u tekstu, kod blokom (obojen YAML) i citatima prikazani su ispravno; visina balončića se sama prilagođava; točkić iznad odgovora skroluje listu (proveren automatski, sa 100 % na 0 %).
+
+![Klijent: Markdown odgovori sa listom, obojenim kodom i citatima](img/klijent_markdown.png)
+
+**Uočeno (za evaluaciju):** neki prikazani detalji potiču iz PDF konverzije, a ne iz klijenta: nazivi poput `_R_` (oznake kurziva iz PDF-a ostale u kodu) i YAML bez uvlačenja (`default-impl-name:Mock`).
 
 ## Dnevnik izmena
 
@@ -414,3 +432,4 @@ Citati `[1]`, `[2]` u tekstu postaju linkovi ka odgovarajućim izvorima (sa puta
 | 23.10.2026. | WPF klijent: MVVM osnova (ViewModelBase, komande, MessageViewModel) i ChatViewModel (slanje, otkazivanje, status servera) |
 | 23.10.2026. | WPF klijent: izgled prozora (lista poruka, unos, Enter / Shift+Enter, indikator učitavanja, status servera, izvori kao linkovi) |
 | 24.10.2026. | Klijent: Markdown → bezbedan HTML (DisableHtml, provera linkova i slika, CSP), citati kao linkovi, lokalni highlight.js |
+| 24.10.2026. | Klijent: prikaz Markdown odgovora u WebView2 (CompositionControl), linkovi u browseru, automatska visina, skrol točkićem |

@@ -2,12 +2,18 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:DocPilot.Client.ViewModels"
+        xmlns:controls="clr-namespace:DocPilot.Client.Controls"
         Title="DocPilot" Width="1000" Height="750" MinWidth="600" MinHeight="450"
         WindowStartupLocation="CenterScreen"
         Background="{StaticResource WindowBackground}"
         FontFamily="Segoe UI" FontSize="14">
 
     <Window.Resources>
+        <!-- odgovor asistenta: Markdown prikazan kroz WebView2 (Controls/MarkdownView.cs) -->
+        <DataTemplate x:Key="MarkdownTemplate" DataType="{x:Type vm:MessageViewModel}">
+            <controls:MarkdownView Markdown="{Binding Text}" Sources="{Binding Sources}" />
+        </DataTemplate>
+
         <!-- jedna poruka; izgled zavisi od vrste (pitanje, odgovor, odbijeno, greška) -->
         <DataTemplate x:Key="MessageTemplate" DataType="{x:Type vm:MessageViewModel}">
             <Border x:Name="Bubble" Margin="0,6" Padding="14,10" CornerRadius="8" MaxWidth="760"
@@ -17,6 +23,7 @@
                     <TextBox x:Name="MessageText" Text="{Binding Text, Mode=OneWay}" IsReadOnly="True"
                              TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0"
                              Foreground="#1F2328" />
+                    <ContentControl x:Name="MarkdownHost" Content="{Binding}" Visibility="Collapsed" Focusable="False" />
 
                     <!-- izvori kao linkovi ispod odgovora -->
                     <StackPanel Margin="0,10,0,0"
@@ -39,6 +46,11 @@
             </Border>
 
             <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Assistant}">
+                    <Setter TargetName="MessageText" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="MarkdownHost" Property="ContentTemplate" Value="{StaticResource MarkdownTemplate}" />
+                    <Setter TargetName="MarkdownHost" Property="Visibility" Value="Visible" />
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.User}">
                     <Setter TargetName="Bubble" Property="HorizontalAlignment" Value="Right" />
                     <Setter TargetName="Bubble" Property="MaxWidth" Value="620" />
