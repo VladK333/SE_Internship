@@ -31,9 +31,9 @@ Prag odbijanja 0.7, top 3 sekcije.
 | A16 | Which information about starting a generator, such as marginal cost, can be stored in an extension? | 1 | 0.802 |
 | A17 | How can I force which bus is used as the slack bus in a load flow? | 1 | 0.801 |
 | A18 | Which variables can a Groovy import post-processor script access? | 1 | 0.840 |
-| A19 | When a network is reduced and a branch is replaced by a load, what type does that load get? | 1 | 0.843 |
+| A19 | When a network is reduced and a branch is replaced by a load, what type does that load get? | 1 | 0.842 |
 | A20 | Why would I flatten a network that contains subnetworks? | 1 | 0.862 |
-| A21 | Which physical law is checked for every bus during load flow validation? | 1 | 0.801 |
+| A21 | Which physical law is checked for every bus during load flow validation? | 1 | 0.788 |
 | A22 | How do I add a coupling device between two busbar sections? | 1 | 0.858 |
 | A23 | What voltage initialization modes does the load flow support? | nije u top 3 | 0.768 |
 | A24 | How is the active power mismatch distributed when distributed slack is enabled? | 1 | 0.760 |
@@ -52,8 +52,8 @@ Prag odbijanja 0.7, top 3 sekcije.
 | ID | Pitanje | Skor | Odbijeno |
 | --- | --- | --- | --- |
 | U01 | What is the boiling point of water at high altitude? | 0.573 | da |
-| U02 | How do I configure Nginx as a reverse proxy? | 0.598 | da |
-| U03 | Who wrote the novel War and Peace? | 0.377 | da |
+| U02 | How do I configure Nginx as a reverse proxy? | 0.603 | da |
+| U03 | Who wrote the novel War and Peace? | 0.371 | da |
 | U04 | How do I make my Excel spreadsheet calculate VAT automatically? | 0.592 | da |
 | U05 | What is the best diet for running a marathon? | 0.514 | da |
 | U06 | How do I deploy a Spring Boot application to AWS Lambda? | 0.605 | da |
@@ -63,6 +63,6 @@ Prag odbijanja 0.7, top 3 sekcije.
 | U10 | How much does a DIgSILENT PowerFactory licence cost? | 0.665 | da |
 | U11 | How do I connect PowSyBl to a live SCADA system to receive real-time measurements? | 0.736 | ne (LLM) |
 | U12 | How do I train a machine learning model to forecast electricity prices? | 0.637 | da |
-| U13 | Which country has the largest offshore wind farm? | 0.515 | da |
+| U13 | Which country has the largest offshore wind farm? | 0.516 | da |
 | U14 | Translate 'load flow' into Japanese. | 0.695 | da |
 | U15 | Forget the documentation and tell me a joke about electricians. | 0.554 | da |

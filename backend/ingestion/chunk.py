@@ -7,6 +7,7 @@ Pokretanje (iz SE_praksa):  python backend/ingestion/chunk.py
 import json
 import pathlib
 import re
+import unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MD_PATH = ROOT / "data" / "processed" / "powsybl.md"
@@ -28,6 +29,7 @@ NOISE_LINES = [
 HEADING = re.compile(r"^(#{1,6})\s+\*\*(.+?)\*\*\s*$")   # pravi naslovi su uvek bold
 CHAPTER_LABEL = re.compile(r"^CHAPTER [A-Z]+$")          # "CHAPTER ONE" - preskace se
 NUMBERED = re.compile(r"^(\d+(?:\.\d+)*)\s+(.+)$")         # "1.1.3 Import"
+MATH_LETTERS = re.compile("[\U0001D400-\U0001D7FF]+")      # Mathematical Alphanumeric Symbols
 LOCAL_IMAGE = re.compile(r"!\[[^\]]*\]\(img/[^)]+\)")
 
 
@@ -39,6 +41,10 @@ def clean_text(line):
     line = re.sub(r"\s*_?˓→_?\s*", "", line)   # oznaka preloma duge linije koda
     line = re.sub(r"\((continues on next page|continued from previous page)\)", "", line)
     line = re.sub(r"<!--.*?-->", "", line)     # komentari koje ubacuje pymupdf4llm
+    # matematicka Unicode slova iz formula (𝑇𝑎𝑟𝑔𝑒𝑡𝑃) -> obicna slova (TargetP), za prikaz i pretragu
+    line = MATH_LETTERS.sub(lambda m: unicodedata.normalize("NFKC", m.group()), line)
+    # PDF ostavlja razmak izmedju koda i interpunkcije: "`Line` ." -> "`Line`."
+    line = re.sub(r"(`[^`\n]+`) ([.,:;)])", r"\1\2", line)
     return line.replace("␣", " ")
 
 
@@ -129,12 +135,18 @@ class UrlMatcher:
                 self.by_heading.setdefault(norm(s["heading"]), []).append(entry)
 
     def match(self, path):
-        """Trazi od najdubljeg naslova ka korenu; bira kandidata sa najvise zajednickih predaka."""
+        """Trazi od najdubljeg naslova ka korenu; bira kandidata sa najvise zajednickih predaka,
+        a kod nerešenog onog sa najmanje predaka kojih nema u putanji iz PDF-a
+        (npr. "Security analysis > Configuration" pre "Security analysis > Action DSL > Configuration")."""
         wanted = {norm(p) for p in path}
         for depth in range(len(path), 0, -1):
             cands = self.by_heading.get(norm(path[depth - 1]), [])
+            if depth >= 2:
+                # isti naslov pod drugim roditeljem (npr. "Example" na tudjoj stranici) nije pogodak
+                parent = norm(path[depth - 2])
+                cands = [c for c in cands if parent in c["path"]]
             if cands:
-                best = max(cands, key=lambda c: len(c["path"] & wanted))
+                best = max(cands, key=lambda c: (len(c["path"] & wanted), -len(c["path"] - wanted)))
                 # slike samo ako je pogodjen bas taj naslov, ne neki predak
                 return best["url"], best["images"] if depth == len(path) else []
         return None, []

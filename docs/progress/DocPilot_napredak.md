@@ -472,7 +472,30 @@ Dva od tri najgora odgovora su direktna posledica promašaja pretrage iz dela 1,
 - **Greška u linkovima izvora:** sekcije kao `Security analysis > Configuration > low-voltage-proportional-threshold` dobijaju link ka stranici *Action DSL* umesto *Configuration*. Uzrok je u chunkeru: kada sekcija ne postoji u izvornoj dokumentaciji kao naslov, uzima se nadređeni naslov („Configuration“), a takvih ima više sa istim brojem zajedničkih predaka.
 - **PDF artefakti u kodu:** izgubljeni razmaci u komandama (`itoolscim-anonymizer--cim-path`) i u DSL primerima (`equipments'equipment1'`).
 
-**Sledeće:** ispravke najgorih grešaka (pretraga za nazive parametara i slične sekcije, linkovi izvora, PDF artefakti), pa ponovno merenje.
+**Sledeće:** ispravke najgorih grešaka, pa ponovno merenje.
+
+## 12. Ispravke posle evaluacije
+
+### Linkovi izvora i PDF artefakti
+
+**Kod:** `backend/ingestion/chunk.py`
+
+**Linkovi izvora.** Kada sekcija iz PDF-a ne postoji kao naslov u izvornoj dokumentaciji, chunker uzima nadređeni naslov. Ako je takvih naslova više (npr. „Configuration“ ili „Example“ na više stranica), ranije je birao prvi sa istim brojem zajedničkih predaka. Sada:
+
+- naslov se prihvata samo ako mu je i nadređeni naslov isti; inače se ide nivo više;
+- kod nerešenog bira se kandidat sa najmanje „stranih“ predaka.
+
+Ispravljeno je 13 linkova, na primer:
+
+| Sekcija | Ranije | Sada |
+| --- | --- | --- |
+| Security analysis > Configuration > pragovi za napon i tok (5 sekcija) | stranica *Action DSL* | stranica *Configuration* |
+| Advanced > Phase / Ratio tap changer > Example | stranica *AMPL Example* | odgovarajuća sekcija o tap changer-u |
+| iTools run-script > Example | stranica *componentDefaultConfig* | stranica *run-script* |
+
+**PDF artefakti.** Uklonjeno je 2.880 „matematičkih“ Unicode slova iz formula (`𝑇𝑎𝑟𝑔𝑒𝑡𝑃` → `TargetP`), koja su kvarila i prikaz i pretragu, i 944 razmaka između koda i interpunkcije. Izgubljeni razmaci unutar koda (`itoolscim-anonymizer`) ne mogu se pouzdano vratiti iz PDF-a i ostali su.
+
+**Provera:** indeks je ponovo napravljen (803 chunka). Evaluacija pretrage daje iste rezultate (84,8 % / 93,3 %, bez regresija), a prag 0,70 i dalje savršeno razdvaja kalibracioni skup.
 
 ## Dnevnik izmena
 
@@ -496,3 +519,4 @@ Dva od tri najgora odgovora su direktna posledica promašaja pretrage iz dela 1,
 | 24.10.2026. | Klijent: prikaz Markdown odgovora u WebView2 (CompositionControl), linkovi u browseru, automatska visina, skrol točkićem |
 | 27.10.2026. | Evaluacija pretrage: 48 pitanja; tačan izvor u top 3 84,8 %, ispravno odbijeno 93,3 %, 0 pogrešno odbijenih |
 | 27.10.2026. | Evaluacija odgovora sa LLM-om: prosečna ocena 2,70/3 (predlog), 15/15 ispravno odbijenih, medijana 59 s |
+| 27.10.2026. | Ispravke: 13 pogrešnih linkova izvora, uklonjeni PDF artefakti (matematička Unicode slova, razmaci uz kod); indeks ponovo napravljen |

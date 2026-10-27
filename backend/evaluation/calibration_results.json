@@ -58,8 +58,8 @@
     {
       "threshold": 0.58,
       "false_refusals": 0,
-      "false_accepts": 10,
-      "balanced_accuracy": 0.8
+      "false_accepts": 11,
+      "balanced_accuracy": 0.78
     },
     {
       "threshold": 0.59,
@@ -76,8 +76,8 @@
     {
       "threshold": 0.61,
       "false_refusals": 0,
-      "false_accepts": 7,
-      "balanced_accuracy": 0.86
+      "false_accepts": 8,
+      "balanced_accuracy": 0.84
     },
     {
       "threshold": 0.62,
@@ -426,8 +426,8 @@
     {
       "question": "Who won the football World Cup in 2018?",
       "label": "unanswerable",
-      "score": 0.4847,
-      "top_section": "Grid exchange formats > UCTE-DEF > Import > Angle regulation"
+      "score": 0.4842,
+      "top_section": "User documentation > Configuration > limit-violation-default-filter > countries"
     },
     {
       "question": "How do I configure a Docker Compose file for PostgreSQL?",
@@ -438,13 +438,13 @@
     {
       "question": "What is the price of electricity in Serbia?",
       "label": "unanswerable",
-      "score": 0.5663,
+      "score": 0.5651,
       "top_section": "Grid model > Network and subnetwork > Battery > Characteristics"
     },
     {
       "question": "How do I size a solar inverter for my house?",
       "label": "unanswerable",
-      "score": 0.6063,
+      "score": 0.6126,
       "top_section": "Grid exchange formats > PSS®E > Import > _Transformer Data_"
     },
     {
@@ -462,8 +462,8 @@
     {
       "question": "What salary does a power systems engineer earn in Germany?",
       "label": "unanswerable",
-      "score": 0.5791,
-      "top_section": "Grid exchange formats > UCTE-DEF > Import > Nodes with active or reactive power generation"
+      "score": 0.5878,
+      "top_section": "Grid exchange formats > PSS®E > Import > _Transformer Data_"
     },
     {
       "question": "How do I train a neural network in PyTorch?",
@@ -522,8 +522,8 @@
     {
       "question": "What is the history of the Tesla company?",
       "label": "unanswerable",
-      "score": 0.4882,
-      "top_section": "Grid model > Network and subnetwork > DC Equipments > Characteristics"
+      "score": 0.4872,
+      "top_section": "Grid model > Network and subnetwork > Battery"
     },
     {
       "question": "How many planets are in the solar system?",
