@@ -17,7 +17,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
 | 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
 | 2 | WPF klijent (.NET Framework 4.8) | Završeno |
-| 3 | Evaluacija, ispravke, prezentacija | Nije počelo |
+| 3 | Evaluacija, ispravke, prezentacija | U toku (evaluacija pretrage gotova) |
 
 ## Arhitektura i struktura projekta
 
@@ -413,6 +413,37 @@ Odgovori asistenta se prikazuju kroz kontrolu `MarkdownView`, a pitanja, odbijan
 
 **Uočeno (za evaluaciju):** neki prikazani detalji potiču iz PDF konverzije, a ne iz klijenta: nazivi poput `_R_` (oznake kurziva iz PDF-a ostale u kodu) i YAML bez uvlačenja (`default-impl-name:Mock`).
 
+## 11. Evaluacija: pretraga i odbijanje
+
+**Skup pitanja:** `backend/evaluation/eval_questions.json` · **Skripta:** `backend/evaluation/evaluate.py` · **Rezultati:** `backend/evaluation/results/retrieval.md` i `retrieval.json`
+
+**Skup:** 33 pitanja na koja dokumentacija odgovara, iz svih poglavlja (CGMES, UCTE, IIDM, PSS®E, Matpower, AMPL, model mreže, proširenja, mrežne izmene, load flow, dinamička simulacija, sigurnosna analiza, osetljivost, kratki spojevi, vremenske serije, iTools, funkcionalno logovanje), i 15 pitanja na koja ne odgovara (opšta, druge tehnologije, elektroenergetika van dokumentacije, pokušaj zaobilaženja uputstava). Za svako pitanje sa odgovorom zapisan je očekivani izvor (putanja sekcije). Pitanja su formulisana svojim rečima, ne prepisivanjem naslova sekcija, i skup je odvojen od kalibracionog skupa na kome je podešen prag.
+
+**Rezultati (samo pretraga, bez LLM-a):**
+
+| Metrika iz specifikacije | Rezultat |
+| --- | --- |
+| Tačan izvor u top 3 | **28/33 (84,8 %)** |
+| Tačan izvor na 1. mestu | 24/33 (72,7 %) |
+| Pitanja sa odgovorom pogrešno odbijena pragom | 0/33 |
+| Pitanja bez odgovora ispravno odbijena pragom | **14/15 (93,3 %)** |
+
+**Promašaji (očekivani izvor nije u top 3):**
+
+| ID | Pitanje | Šta je pronađeno | Uzrok |
+| --- | --- | --- | --- |
+| A01 | Koja baza čuva CGMES podatke pri uvozu | „Import“ i opcija `powsybl-triplestore` | pronađene sekcije **takođe odgovaraju** (triplestore, RDF4J); očekivani izvor je bio preuzak, ali oznaka nije naknadno menjana |
+| A02 | U šta se pretvara CGMES SynchronousMachine | CGMES *Export* > Generator | naslov sekcije je jedna reč (`SynchronousMachine`), a pitanje „synchronous machine“; izvoz i uvoz su vrlo slični |
+| A05 | Opcije pri uvozu UCTE fajla | UCTE *Export* > Options | uvoz i izvoz imaju sekcije istog imena |
+| A13 | Kako se razlikuje kondenzator od prigušnice | PSS®E sekcije o šantovima | ista tema postoji u više poglavlja |
+| A23 | Načini inicijalizacije napona u load flow-u | opšte load flow sekcije | odgovor je u parametru `voltageInitMode`; embedding model slabo povezuje nazive u camelCase-u sa rečima |
+
+**Pitanje bez odgovora koje je prošlo prag:** U11 („kako povezati PowSyBl sa SCADA sistemom u realnom vremenu“, skor 0,736) — tematski blisko dokumentaciji; odbijanje u tom slučaju prepušteno je modelu (proverava se u delu 2).
+
+**Zaključak za ispravke:** promašaji nastaju kod sličnih sekcija u različitim poglavljima (uvoz/izvoz, PSS®E/model mreže) i kod naziva parametara. Kandidati za poboljšanje su hibridna pretraga (BM25 + vektori, bonus iz specifikacije), koja bolje pogađa tačne nazive poput `voltageInitMode`, i dodavanje šireg konteksta naslova u tekst za embedding.
+
+**Sledeće (deo 2):** kvalitet odgovora sa LLM-om, ocena 1–3.
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -433,3 +464,4 @@ Odgovori asistenta se prikazuju kroz kontrolu `MarkdownView`, a pitanja, odbijan
 | 23.10.2026. | WPF klijent: izgled prozora (lista poruka, unos, Enter / Shift+Enter, indikator učitavanja, status servera, izvori kao linkovi) |
 | 24.10.2026. | Klijent: Markdown → bezbedan HTML (DisableHtml, provera linkova i slika, CSP), citati kao linkovi, lokalni highlight.js |
 | 24.10.2026. | Klijent: prikaz Markdown odgovora u WebView2 (CompositionControl), linkovi u browseru, automatska visina, skrol točkićem |
+| 27.10.2026. | Evaluacija pretrage: 48 pitanja; tačan izvor u top 3 84,8 %, ispravno odbijeno 93,3 %, 0 pogrešno odbijenih |

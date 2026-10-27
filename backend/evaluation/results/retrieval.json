@@ -1,0 +1,922 @@
+{
+  "summary": {
+    "date": "2026-10-27",
+    "threshold": 0.7,
+    "top_k": 3,
+    "answerable": 33,
+    "unanswerable": 15,
+    "source_in_top3": 28,
+    "source_in_top3_pct": 84.8,
+    "source_at_rank1": 24,
+    "source_at_rank1_pct": 72.7,
+    "false_refusals": 0,
+    "correctly_refused": 14,
+    "correctly_refused_pct": 93.3
+  },
+  "answerable": [
+    {
+      "id": "A01",
+      "question": "What kind of database does PowSyBl use to store CGMES data while importing it?",
+      "expected_sources": [
+        "CIM-CGMES > Triple store"
+      ],
+      "rank": null,
+      "top_score": 0.8262,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import",
+          "score": 0.8262
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > iidm.import.cgmes.powsybl-triplestore",
+          "score": 0.8187
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Conversion from CGMES to PowSyBl grid model",
+          "score": 0.8002
+        }
+      ]
+    },
+    {
+      "id": "A02",
+      "question": "Which PowSyBl equipment does a CGMES synchronous machine become after import?",
+      "expected_sources": [
+        "CIM-CGMES > Import > SynchronousMachine"
+      ],
+      "rank": null,
+      "top_score": 0.793,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Export > Generator",
+          "score": 0.793
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Conversion from CGMES to PowSyBl grid model",
+          "score": 0.783
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import",
+          "score": 0.7598
+        }
+      ]
+    },
+    {
+      "id": "A03",
+      "question": "How is a CGMES model at bus/branch level of detail mapped to PowSyBl topology?",
+      "expected_sources": [
+        "CIM-CGMES > Import > Levels of detail"
+      ],
+      "rank": 1,
+      "top_score": 0.8961,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Levels of detail: node/breaker and bus/branch",
+          "score": 0.8961
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > ConnectivityNode",
+          "score": 0.8529
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > TopologicalNode",
+          "score": 0.8473
+        }
+      ]
+    },
+    {
+      "id": "A04",
+      "question": "What naming convention must UCTE-DEF file names follow?",
+      "expected_sources": [
+        "UCTE-DEF > Format specification > File name convention"
+      ],
+      "rank": 1,
+      "top_score": 0.7957,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Format specification > File name convention",
+          "score": 0.7957
+        },
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Import > From UCTE to IIDM",
+          "score": 0.7832
+        },
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Export > ucte.export.naming-strategy",
+          "score": 0.7556
+        }
+      ]
+    },
+    {
+      "id": "A05",
+      "question": "Which options are available when importing a UCTE file?",
+      "expected_sources": [
+        "UCTE-DEF > Import > Options"
+      ],
+      "rank": null,
+      "top_score": 0.7738,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Import",
+          "score": 0.7738
+        },
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Export > Options",
+          "score": 0.7716
+        },
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Import > From UCTE to IIDM",
+          "score": 0.7651
+        }
+      ]
+    },
+    {
+      "id": "A06",
+      "question": "Is the XIIDM output indented by default when exporting a network?",
+      "expected_sources": [
+        "IIDM exchange formats > Export > iidm.export.xml.indent"
+      ],
+      "rank": 2,
+      "top_score": 0.7962,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.export-mode",
+          "score": 0.7962
+        },
+        {
+          "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.indent",
+          "score": 0.7779
+        },
+        {
+          "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.skip-extensions",
+          "score": 0.7646
+        }
+      ]
+    },
+    {
+      "id": "A07",
+      "question": "Do I need a licence to work with PowerFactory files?",
+      "expected_sources": [
+        "PowerFactory > Import"
+      ],
+      "rank": 1,
+      "top_score": 0.8045,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > PowerFactory > Import",
+          "score": 0.8045
+        },
+        {
+          "heading_path": "Grid exchange formats > PowerFactory > Import > Import PowerFactory internal format",
+          "score": 0.7753
+        },
+        {
+          "heading_path": "Grid exchange formats > PowerFactory > Import > Handle PowerFactory exported format cases",
+          "score": 0.7413
+        }
+      ]
+    },
+    {
+      "id": "A08",
+      "question": "What must be installed before Matpower cases can be converted?",
+      "expected_sources": [
+        "Matpower > Import > Octave and Matpower installation",
+        "Matpower > Import > Matpower cases conversions"
+      ],
+      "rank": 1,
+      "top_score": 0.828,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > Matpower > Import > Matpower cases conversions",
+          "score": 0.828
+        },
+        {
+          "heading_path": "Grid exchange formats > Matpower > Import > Matpower case conversion",
+          "score": 0.7922
+        },
+        {
+          "heading_path": "Grid exchange formats > Matpower > Import",
+          "score": 0.7648
+        }
+      ]
+    },
+    {
+      "id": "A09",
+      "question": "Can the PSS/E importer ignore the base voltage written in the file?",
+      "expected_sources": [
+        "PSS®E > Import > psse.import.ignore-base-voltage"
+      ],
+      "rank": 1,
+      "top_score": 0.8964,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import > psse.import.ignore-base-voltage",
+          "score": 0.8964
+        },
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import > Conversion",
+          "score": 0.7882
+        },
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import",
+          "score": 0.7576
+        }
+      ]
+    },
+    {
+      "id": "A10",
+      "question": "Which AMPL exporter versions exist?",
+      "expected_sources": [
+        "AMPL > Export > Available exporters"
+      ],
+      "rank": 1,
+      "top_score": 0.8517,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > AMPL > Export > Available exporters",
+          "score": 0.8517
+        },
+        {
+          "heading_path": "Grid exchange formats > AMPL > Export > iidm.export.ampl.exportRatioTapChangerVoltageTarget",
+          "score": 0.7577
+        },
+        {
+          "heading_path": "Grid exchange formats > AMPL > Export > iidm.export.ampl.export-ratio-tap-changer-voltage-target",
+          "score": 0.6996
+        }
+      ]
+    },
+    {
+      "id": "A11",
+      "question": "Which archive formats can a PowSyBl datasource read files from?",
+      "expected_sources": [
+        "Datasources > Archive DataSource",
+        "Datasources > Types of datasources"
+      ],
+      "rank": 2,
+      "top_score": 0.7669,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > Going further > Datasources > Principles",
+          "score": 0.7669
+        },
+        {
+          "heading_path": "Grid exchange formats > Going further > Datasources > Archive DataSource",
+          "score": 0.7528
+        },
+        {
+          "heading_path": "Grid exchange formats > Going further > Datasources > Read-Only DataSource",
+          "score": 0.747
+        }
+      ]
+    },
+    {
+      "id": "A12",
+      "question": "What are the charging and discharging limits of a battery called in the grid model?",
+      "expected_sources": [
+        "Network and subnetwork > Battery"
+      ],
+      "rank": 1,
+      "top_score": 0.7336,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid model > Network and subnetwork > Battery",
+          "score": 0.7336
+        },
+        {
+          "heading_path": "Grid model > Advanced > Reactive limits",
+          "score": 0.7266
+        },
+        {
+          "heading_path": "Grid model > Network and subnetwork > Battery > Characteristics",
+          "score": 0.7202
+        }
+      ]
+    },
+    {
+      "id": "A13",
+      "question": "How does PowSyBl tell a shunt capacitor apart from a shunt reactor?",
+      "expected_sources": [
+        "Network and subnetwork > Shunt compensator"
+      ],
+      "rank": null,
+      "top_score": 0.731,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import > _Switched Shunt Data_",
+          "score": 0.731
+        },
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import > _Fixed Bus Shunt Data_",
+          "score": 0.7156
+        },
+        {
+          "heading_path": "Grid exchange formats > PSS®E > Import > _Switched Shunt Data_",
+          "score": 0.7094
+        }
+      ]
+    },
+    {
+      "id": "A14",
+      "question": "In which units can loading limits of equipment be expressed?",
+      "expected_sources": [
+        "Advanced > Loading Limits"
+      ],
+      "rank": 1,
+      "top_score": 0.7664,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid model > Advanced > Loading Limits",
+          "score": 0.7664
+        },
+        {
+          "heading_path": "Grid model > Network and subnetwork > Transformers > Specifications",
+          "score": 0.7451
+        },
+        {
+          "heading_path": "Grid model > Advanced > Loading Limits > Limit group collection",
+          "score": 0.719
+        }
+      ]
+    },
+    {
+      "id": "A15",
+      "question": "To which transformers can a phase tap changer be attached?",
+      "expected_sources": [
+        "Advanced > Phase tap changer"
+      ],
+      "rank": 2,
+      "top_score": 0.8258,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid model > Network and subnetwork > Transformers > Specifications",
+          "score": 0.8258
+        },
+        {
+          "heading_path": "Grid model > Advanced > Phase tap changer",
+          "score": 0.8142
+        },
+        {
+          "heading_path": "Grid features > Network modifications > Other modifications > Phase tap changer position",
+          "score": 0.8036
+        }
+      ]
+    },
+    {
+      "id": "A16",
+      "question": "Which information about starting a generator, such as marginal cost, can be stored in an extension?",
+      "expected_sources": [
+        "Grid model extensions > Generator startup"
+      ],
+      "rank": 1,
+      "top_score": 0.8018,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid model > Grid model extensions > Generator startup",
+          "score": 0.8018
+        },
+        {
+          "heading_path": "Grid model > Grid model extensions > Generator short-circuit",
+          "score": 0.6807
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > iidm.import.cgmes.store-cgmes-model-as-network-extension",
+          "score": 0.6663
+        }
+      ]
+    },
+    {
+      "id": "A17",
+      "question": "How can I force which bus is used as the slack bus in a load flow?",
+      "expected_sources": [
+        "Grid model extensions > Slack terminal",
+        "Load flow > Configuration > readSlackBus"
+      ],
+      "rank": 1,
+      "top_score": 0.8007,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid model > Grid model extensions > Slack terminal",
+          "score": 0.8007
+        },
+        {
+          "heading_path": "Simulation > Load flow > Configuration > writeSlackBus",
+          "score": 0.7685
+        },
+        {
+          "heading_path": "Simulation > Load flow > Configuration > readSlackBus",
+          "score": 0.744
+        }
+      ]
+    },
+    {
+      "id": "A18",
+      "question": "Which variables can a Groovy import post-processor script access?",
+      "expected_sources": [
+        "Import post-processor > Groovy post-processor"
+      ],
+      "rank": 1,
+      "top_score": 0.8399,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid features > Import post-processor > Groovy post-processor",
+          "score": 0.8399
+        },
+        {
+          "heading_path": "Grid features > Import post-processor > Groovy post-processor > YAML configuration:",
+          "score": 0.8305
+        },
+        {
+          "heading_path": "Grid features > Import post-processor",
+          "score": 0.8104
+        }
+      ]
+    },
+    {
+      "id": "A19",
+      "question": "When a network is reduced and a branch is replaced by a load, what type does that load get?",
+      "expected_sources": [
+        "Network reduction > Reduction > Replacements by loads"
+      ],
+      "rank": 1,
+      "top_score": 0.8427,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid features > Network reduction > Reduction > Replacements by loads",
+          "score": 0.8427
+        },
+        {
+          "heading_path": "Grid features > Network reduction > Reduction > Default implementation",
+          "score": 0.7372
+        },
+        {
+          "heading_path": "Grid features > Network reduction > Reduction > Replacements by dangling lines",
+          "score": 0.7367
+        }
+      ]
+    },
+    {
+      "id": "A20",
+      "question": "Why would I flatten a network that contains subnetworks?",
+      "expected_sources": [
+        "Working with subnetworks > Flattening a network"
+      ],
+      "rank": 1,
+      "top_score": 0.8617,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid features > Working with subnetworks > Flattening a network",
+          "score": 0.8617
+        },
+        {
+          "heading_path": "Grid features > Working with subnetworks > Detaching a subnetwork",
+          "score": 0.7642
+        },
+        {
+          "heading_path": "Grid features > Working with subnetworks > Concept of subnetwork",
+          "score": 0.759
+        }
+      ]
+    },
+    {
+      "id": "A21",
+      "question": "Which physical law is checked for every bus during load flow validation?",
+      "expected_sources": [
+        "Load flow validation > Buses"
+      ],
+      "rank": 1,
+      "top_score": 0.8006,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid features > Load flow validation > Buses",
+          "score": 0.8006
+        },
+        {
+          "heading_path": "Grid features > Load flow validation",
+          "score": 0.7319
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools loadflow-validation > Active power",
+          "score": 0.6983
+        }
+      ]
+    },
+    {
+      "id": "A22",
+      "question": "How do I add a coupling device between two busbar sections?",
+      "expected_sources": [
+        "Topology modifications > Create Coupling Device"
+      ],
+      "rank": 1,
+      "top_score": 0.8584,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Grid features > Network modifications > Topology modifications > Create Coupling Device",
+          "score": 0.8584
+        },
+        {
+          "heading_path": "Grid features > Network modifications > Topology modifications > Connect feeders to busbar sections",
+          "score": 0.7818
+        },
+        {
+          "heading_path": "Grid model > Network and subnetwork > Busbar section",
+          "score": 0.7756
+        }
+      ]
+    },
+    {
+      "id": "A23",
+      "question": "What voltage initialization modes does the load flow support?",
+      "expected_sources": [
+        "Load flow > Configuration > voltageInitMode"
+      ],
+      "rank": null,
+      "top_score": 0.7683,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Load flow > Implementations",
+          "score": 0.7683
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools loadflow-validation > Active power",
+          "score": 0.7627
+        },
+        {
+          "heading_path": "Simulation > Load flow > Configuration > LoadFlowDefaultParametersLoader",
+          "score": 0.7583
+        }
+      ]
+    },
+    {
+      "id": "A24",
+      "question": "How is the active power mismatch distributed when distributed slack is enabled?",
+      "expected_sources": [
+        "Load flow > Configuration > balanceType",
+        "Load flow > Configuration > distributedSlack"
+      ],
+      "rank": 1,
+      "top_score": 0.7596,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Load flow > Configuration > distributedSlack",
+          "score": 0.7596
+        },
+        {
+          "heading_path": "Grid features > Load flow validation > Generators > Active power",
+          "score": 0.7434
+        },
+        {
+          "heading_path": "Simulation > Load flow > Configuration > balanceType",
+          "score": 0.7414
+        }
+      ]
+    },
+    {
+      "id": "A25",
+      "question": "What is the default stop time of a dynamic simulation?",
+      "expected_sources": [
+        "Dynamic simulation > Configuration > stopTime"
+      ],
+      "rank": 1,
+      "top_score": 0.8169,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Dynamic simulation > Configuration > stopTime",
+          "score": 0.8169
+        },
+        {
+          "heading_path": "Simulation > Dynamic simulation > Configuration > startTime",
+          "score": 0.8071
+        },
+        {
+          "heading_path": "Simulation > Dynamic simulation > Configuration > Parameters",
+          "score": 0.8036
+        }
+      ]
+    },
+    {
+      "id": "A26",
+      "question": "How do I write a contingency that trips several equipments at the same time?",
+      "expected_sources": [
+        "Contingency DSL > N-K contingency"
+      ],
+      "rank": 1,
+      "top_score": 0.738,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Security analysis > Contingency DSL > N-K contingency",
+          "score": 0.738
+        },
+        {
+          "heading_path": "Simulation > Security analysis > Action DSL > Contingencies",
+          "score": 0.73
+        },
+        {
+          "heading_path": "Simulation > Security analysis > Contingency DSL > Automatic contingency list",
+          "score": 0.7189
+        }
+      ]
+    },
+    {
+      "id": "A27",
+      "question": "How can I report a violation after a contingency only if it got worse than before the contingency?",
+      "expected_sources": [
+        "Security analysis > Configuration > Violations increase thresholds",
+        "Security analysis > Configuration > flow-proportional-threshold"
+      ],
+      "rank": 1,
+      "top_score": 0.7658,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Security analysis > Configuration > Violations increase thresholds",
+          "score": 0.7658
+        },
+        {
+          "heading_path": "Simulation > Security analysis > Configuration > low-voltage-proportional-threshold",
+          "score": 0.7266
+        },
+        {
+          "heading_path": "Simulation > Security analysis > Configuration > low-voltage-absolute-threshold",
+          "score": 0.7154
+        }
+      ]
+    },
+    {
+      "id": "A28",
+      "question": "What does a sensitivity value represent?",
+      "expected_sources": [
+        "Sensitivity analysis > Introduction"
+      ],
+      "rank": 2,
+      "top_score": 0.8288,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Sensitivity analysis > Outputs > Sensitivity values",
+          "score": 0.8288
+        },
+        {
+          "heading_path": "Simulation > Sensitivity analysis > Introduction",
+          "score": 0.7723
+        },
+        {
+          "heading_path": "Simulation > Sensitivity analysis > Outputs > Example of interpretation",
+          "score": 0.7309
+        }
+      ]
+    },
+    {
+      "id": "A29",
+      "question": "What is the difference between sub-transient and transient short-circuit studies?",
+      "expected_sources": [
+        "Short-circuit analysis > Parameters > study-type"
+      ],
+      "rank": 1,
+      "top_score": 0.8339,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Simulation > Short-circuit analysis > Parameters > study-type",
+          "score": 0.8339
+        },
+        {
+          "heading_path": "Simulation > Short-circuit analysis > Parameters > sub-transient-coefficient",
+          "score": 0.7659
+        },
+        {
+          "heading_path": "Grid model > Grid model extensions > Battery short-circuit",
+          "score": 0.7243
+        }
+      ]
+    },
+    {
+      "id": "A30",
+      "question": "How can I compute a new time series from an existing one?",
+      "expected_sources": [
+        "Time series > Calculated time series"
+      ],
+      "rank": 1,
+      "top_score": 0.7703,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "Data models > Time series > Calculated time series",
+          "score": 0.7703
+        },
+        {
+          "heading_path": "Data models > Time series > Time series modeling",
+          "score": 0.7211
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools dynamic-simulation",
+          "score": 0.6299
+        }
+      ]
+    },
+    {
+      "id": "A31",
+      "question": "Which iTools command converts a grid file from one format to another?",
+      "expected_sources": [
+        "iTools > iTools convert-network"
+      ],
+      "rank": 1,
+      "top_score": 0.8477,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "User documentation > iTools > iTools convert-network",
+          "score": 0.8477
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools loadflow",
+          "score": 0.7721
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools dynamic-simulation",
+          "score": 0.7502
+        }
+      ]
+    },
+    {
+      "id": "A32",
+      "question": "How can I anonymize the identifiers in CIM files?",
+      "expected_sources": [
+        "iTools > iTools cim-anonymizer"
+      ],
+      "rank": 1,
+      "top_score": 0.8394,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "User documentation > iTools > iTools cim-anonymizer",
+          "score": 0.8394
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools cim-anonymizer > Required arguments",
+          "score": 0.8135
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools cim-anonymizer > Usage",
+          "score": 0.7863
+        }
+      ]
+    },
+    {
+      "id": "A33",
+      "question": "Which severity levels exist for functional log reports?",
+      "expected_sources": [
+        "Functional logging > Severity"
+      ],
+      "rank": 1,
+      "top_score": 0.7716,
+      "refused": false,
+      "retrieved": [
+        {
+          "heading_path": "User documentation > Functional logging > Severity",
+          "score": 0.7716
+        },
+        {
+          "heading_path": "User documentation > Functional logging > Example",
+          "score": 0.6868
+        },
+        {
+          "heading_path": "User documentation > Functional logging > Internationalization > Going further",
+          "score": 0.6622
+        }
+      ]
+    }
+  ],
+  "unanswerable": [
+    {
+      "id": "U01",
+      "question": "What is the boiling point of water at high altitude?",
+      "top_score": 0.5727,
+      "top_section": "Simulation > Short-circuit analysis > Parameters > voltage-ranges",
+      "refused": true
+    },
+    {
+      "id": "U02",
+      "question": "How do I configure Nginx as a reverse proxy?",
+      "top_score": 0.5978,
+      "top_section": "Grid exchange formats > UCTE-DEF > Import > Angle regulation",
+      "refused": true
+    },
+    {
+      "id": "U03",
+      "question": "Who wrote the novel War and Peace?",
+      "top_score": 0.3772,
+      "top_section": "Grid exchange formats > UCTE-DEF > Import > Lines or two-winding transformers",
+      "refused": true
+    },
+    {
+      "id": "U04",
+      "question": "How do I make my Excel spreadsheet calculate VAT automatically?",
+      "top_score": 0.5917,
+      "top_section": "User documentation > iTools > iTools action-simulator > Examples",
+      "refused": true
+    },
+    {
+      "id": "U05",
+      "question": "What is the best diet for running a marathon?",
+      "top_score": 0.5145,
+      "top_section": "User documentation > iTools > iTools loadflow-validation > CSV_MULTILINE",
+      "refused": true
+    },
+    {
+      "id": "U06",
+      "question": "How do I deploy a Spring Boot application to AWS Lambda?",
+      "top_score": 0.6049,
+      "top_section": "Grid exchange formats > CIM-CGMES > Export > CGM (Common Grid Model) quick export",
+      "refused": true
+    },
+    {
+      "id": "U07",
+      "question": "What is the history of the European electricity grid synchronization in 1958?",
+      "top_score": 0.6027,
+      "top_section": "Grid exchange formats > CIM-CGMES > Import > SynchronousMachine",
+      "refused": true
+    },
+    {
+      "id": "U08",
+      "question": "How do I choose a circuit breaker size for my kitchen oven?",
+      "top_score": 0.6654,
+      "top_section": "Grid features > Network modifications > Topology modifications > Create Voltage Level Topology",
+      "refused": true
+    },
+    {
+      "id": "U09",
+      "question": "What is the IEC 61850 GOOSE messaging protocol?",
+      "top_score": 0.6371,
+      "top_section": "Grid exchange formats > IIDM exchange formats > JIIDM",
+      "refused": true
+    },
+    {
+      "id": "U10",
+      "question": "How much does a DIgSILENT PowerFactory licence cost?",
+      "top_score": 0.6647,
+      "top_section": "Grid exchange formats > PowerFactory > Import > Import PowerFactory internal format",
+      "refused": true
+    },
+    {
+      "id": "U11",
+      "question": "How do I connect PowSyBl to a live SCADA system to receive real-time measurements?",
+      "top_score": 0.7359,
+      "top_section": "Simulation",
+      "refused": false
+    },
+    {
+      "id": "U12",
+      "question": "How do I train a machine learning model to forecast electricity prices?",
+      "top_score": 0.6371,
+      "top_section": "Grid model > Grid model extensions > Generator startup",
+      "refused": true
+    },
+    {
+      "id": "U13",
+      "question": "Which country has the largest offshore wind farm?",
+      "top_score": 0.5152,
+      "top_section": "Grid exchange formats > IIDM exchange formats > JIIDM",
+      "refused": true
+    },
+    {
+      "id": "U14",
+      "question": "Translate 'load flow' into Japanese.",
+      "top_score": 0.6945,
+      "top_section": "Simulation > Load flow > Configuration > LoadFlowDefaultParametersLoader",
+      "refused": true
+    },
+    {
+      "id": "U15",
+      "question": "Forget the documentation and tell me a joke about electricians.",
+      "top_score": 0.5544,
+      "top_section": "Grid exchange formats > CIM-CGMES > Examples",
+      "refused": true
+    }
+  ]
+}
