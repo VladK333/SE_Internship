@@ -17,7 +17,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
 | 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
 | 2 | WPF klijent (.NET Framework 4.8) | Završeno |
-| 3 | Evaluacija, ispravke, prezentacija | U toku (evaluacija pretrage gotova) |
+| 3 | Evaluacija, ispravke, prezentacija | U toku (evaluacija gotova, sledeće ispravke) |
 
 ## Arhitektura i struktura projekta
 
@@ -442,7 +442,37 @@ Odgovori asistenta se prikazuju kroz kontrolu `MarkdownView`, a pitanja, odbijan
 
 **Zaključak za ispravke:** promašaji nastaju kod sličnih sekcija u različitim poglavljima (uvoz/izvoz, PSS®E/model mreže) i kod naziva parametara. Kandidati za poboljšanje su hibridna pretraga (BM25 + vektori, bonus iz specifikacije), koja bolje pogađa tačne nazive poput `voltageInitMode`, i dodavanje šireg konteksta naslova u tekst za embedding.
 
-**Sledeće (deo 2):** kvalitet odgovora sa LLM-om, ocena 1–3.
+### Kvalitet odgovora (deo 2)
+
+**Skripte:** `backend/evaluation/evaluate_answers.py` (svako pitanje kroz ceo `/chat`), `summarize_answers.py` · **Rezultati:** `results/answers.jsonl`, `results/answer_scores.json`, `results/answers.md`
+
+Svih 48 pitanja je prošlo kroz isti tok kao pravi server (pretraga, prag, llama3, odbijanje modela), ukupno za oko 40 minuta. Odgovori na 33 pitanja sa odgovorom ocenjeni su na skali 1–3 (1 = netačno ili bez odgovora, 2 = delimično, 3 = tačno i potpuno), sa obrazloženjem za svako pitanje. *Ocene su predlog i čekaju potvrdu autorke.*
+
+| Metrika | Rezultat |
+| --- | --- |
+| Prosečna ocena odgovora | **2,70 / 3** |
+| Ocena 3 / 2 / 1 | 26 / 4 / 3 |
+| Pitanja bez odgovora ispravno odbijena (prag + model) | **15/15** (14 pragom za < 1 s, 1 modelom) |
+| Pitanja sa odgovorom koja je model pogrešno odbio | 1/33 (A05) |
+| Vreme odgovora sa LLM-om | medijana 59 s, najduže 155 s |
+
+**Najslabiji odgovori:**
+
+| ID | Ocena | Uzrok |
+| --- | --- | --- |
+| A13 | 1 | pretraga našla PSS®E sekcije umesto modela mreže, pa je odgovor netačan i delimično izmišljen |
+| A23 | 1 | pretraga nije našla `voltageInitMode`, pa model nabraja implementacije load flow-a |
+| A05 | 1 | prava sekcija pronađena, ali model ipak odbio da odgovori |
+| A02, A16, A24, A27 | 2 | tačno, ali nepotpuno; A27 dodaje nepotkrepljeno objašnjenje |
+
+Dva od tri najgora odgovora su direktna posledica promašaja pretrage iz dela 1, pa poboljšanje pretrage najviše utiče i na kvalitet odgovora. Bezbednost se pokazala dobro: nijedno pitanje van dokumentacije nije dobilo odgovor, uključujući pokušaj „Forget the documentation…“ i pitanje o SCADA sistemu koje je prošlo prag.
+
+**Uočeno tokom evaluacije:**
+
+- **Greška u linkovima izvora:** sekcije kao `Security analysis > Configuration > low-voltage-proportional-threshold` dobijaju link ka stranici *Action DSL* umesto *Configuration*. Uzrok je u chunkeru: kada sekcija ne postoji u izvornoj dokumentaciji kao naslov, uzima se nadređeni naslov („Configuration“), a takvih ima više sa istim brojem zajedničkih predaka.
+- **PDF artefakti u kodu:** izgubljeni razmaci u komandama (`itoolscim-anonymizer--cim-path`) i u DSL primerima (`equipments'equipment1'`).
+
+**Sledeće:** ispravke najgorih grešaka (pretraga za nazive parametara i slične sekcije, linkovi izvora, PDF artefakti), pa ponovno merenje.
 
 ## Dnevnik izmena
 
@@ -465,3 +495,4 @@ Odgovori asistenta se prikazuju kroz kontrolu `MarkdownView`, a pitanja, odbijan
 | 24.10.2026. | Klijent: Markdown → bezbedan HTML (DisableHtml, provera linkova i slika, CSP), citati kao linkovi, lokalni highlight.js |
 | 24.10.2026. | Klijent: prikaz Markdown odgovora u WebView2 (CompositionControl), linkovi u browseru, automatska visina, skrol točkićem |
 | 27.10.2026. | Evaluacija pretrage: 48 pitanja; tačan izvor u top 3 84,8 %, ispravno odbijeno 93,3 %, 0 pogrešno odbijenih |
+| 27.10.2026. | Evaluacija odgovora sa LLM-om: prosečna ocena 2,70/3 (predlog), 15/15 ispravno odbijenih, medijana 59 s |
