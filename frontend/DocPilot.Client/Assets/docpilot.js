@@ -37,16 +37,27 @@
     }
   }, { passive: false });
 
-  document.addEventListener("DOMContentLoaded", function () {
+  // bojenje koda i praćenje slika (slike se učitavaju naknadno i menjaju visinu)
+  function prepareContent() {
     if (window.hljs) {
       window.hljs.highlightAll();
     }
     reportHeight();
-    // slike se učitavaju naknadno i menjaju visinu
     Array.prototype.forEach.call(document.images, function (img) {
       img.addEventListener("load", reportHeight);
       img.addEventListener("error", reportHeight);
     });
+  }
+
+  // tokom strima aplikacija menja samo sadržaj, bez ponovnog učitavanja stranice (nema treptanja);
+  // html je već očišćen u MarkdownRenderer-u, isti kao pri prvom prikazu
+  window.docpilotSetBody = function (html) {
+    document.body.innerHTML = html;
+    prepareContent();
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    prepareContent();
     if (window.ResizeObserver) {
       new ResizeObserver(reportHeight).observe(document.body);
     }

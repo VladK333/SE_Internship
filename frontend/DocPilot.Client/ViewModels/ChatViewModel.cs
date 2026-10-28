@@ -1,7 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using DocPilot.Client.Models;
 using DocPilot.Client.Services;
 
 namespace DocPilot.Client.ViewModels
@@ -13,15 +15,18 @@ namespace DocPilot.Client.ViewModels
         public const int MaxQuestionLength = 1000;
 
         readonly IChatApiClient api;
+        readonly bool useStreaming;
         CancellationTokenSource pending;
         string question = "";
         bool isBusy;
         string serverStatus = "Provera servera...";
         bool isServerOk;
 
-        public ChatViewModel(IChatApiClient api)
+        /// useStreaming: odgovor se prikazuje dok ga model piše (POST /chat/stream); inače se čeka ceo (POST /chat).
+        public ChatViewModel(IChatApiClient api, bool useStreaming = true)
         {
             this.api = api ?? throw new ArgumentNullException(nameof(api));
+            this.useStreaming = useStreaming;
             SendCommand = new AsyncRelayCommand(SendAsync, () => CanSend);
             CancelCommand = new RelayCommand(Cancel, () => IsBusy);
         }
@@ -102,19 +107,46 @@ namespace DocPilot.Client.ViewModels
             Question = "";
             IsBusy = true;
             pending = new CancellationTokenSource();
+            MessageViewModel streaming = null;
             try
             {
-                var response = await api.AskAsync(text, pending.Token);
-                Messages.Add(MessageViewModel.FromResponse(response));
+                if (useStreaming)
+                {
+                    streaming = MessageViewModel.StartStreaming(text, SendRatingAsync);
+                    // Progress javlja delove na UI niti, istim redom kojim su stigli
+                    var progress = new Progress<ChatStreamUpdate>(update =>
+                    {
+                        if (update.Sources != null)
+                            streaming.SetSources(update.Sources);
+                        if (update.Token != null)
+                        {
+                            // balončić se pojavljuje tek sa prvim delom teksta; do tada radi indikator učitavanja
+                            if (!Messages.Contains(streaming))
+                                Messages.Add(streaming);
+                            streaming.AppendText(update.Token);
+                        }
+                    });
+                    var response = await api.AskStreamingAsync(text, progress, pending.Token);
+                    if (!Messages.Contains(streaming))
+                        Messages.Add(streaming);   // odbijanje bez poziva modelu: nije bilo delova teksta
+                    streaming.Complete(response);
+                }
+                else
+                {
+                    var response = await api.AskAsync(text, pending.Token);
+                    Messages.Add(MessageViewModel.FromResponse(response, text, SendRatingAsync));
+                }
                 if (!IsServerOk)
                     await CheckServerAsync();   // server je u međuvremenu pokrenut: osveži status
             }
             catch (OperationCanceledException)
             {
+                streaming?.StopStreaming();
                 Messages.Add(MessageViewModel.FromError("Pitanje je otkazano."));
             }
             catch (ChatApiException e)
             {
+                streaming?.StopStreaming();
                 Messages.Add(MessageViewModel.FromError(e));
                 if (e.Kind == ChatApiErrorKind.ServerUnavailable)
                 {
@@ -125,6 +157,7 @@ namespace DocPilot.Client.ViewModels
             catch (Exception e)
             {
                 // nijedna greška ne sme da sruši aplikaciju (async void komanda)
+                streaming?.StopStreaming();
                 Messages.Add(MessageViewModel.FromError("Neočekivana greška: " + e.Message));
             }
             finally
@@ -136,5 +169,16 @@ namespace DocPilot.Client.ViewModels
         }
 
         void Cancel() => pending?.Cancel();
+
+        /// Ocena odgovora ide na POST /feedback, zajedno sa pitanjem, odgovorom i izvorima.
+        Task SendRatingAsync(MessageViewModel message, FeedbackRating rating) =>
+            api.SendFeedbackAsync(new FeedbackRequest
+            {
+                Question = message.Question,
+                Answer = message.Text,
+                Rating = rating == FeedbackRating.Up ? "up" : "down",
+                Refused = message.Kind == MessageKind.Refused,
+                Sources = message.Sources.Select(s => s.HeadingPath).ToList(),
+            });
     }
 }

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using DocPilot.Client.Themes;
 using DocPilot.Client.ViewModels;
 
 namespace DocPilot.Client
@@ -17,6 +19,19 @@ namespace DocPilot.Client
             InitializeComponent();
             Loaded += (s, e) => QuestionBox.Focus();
             DataContextChanged += OnDataContextChanged;
+            SourceInitialized += (s, e) => ThemeManager.ApplyTitleBar(this);
+            ThemeManager.ThemeChanged += (s, e) => UpdateThemeButton();
+            UpdateThemeButton();
+        }
+
+        void OnThemeButtonClick(object sender, RoutedEventArgs e) => ThemeManager.Toggle();
+
+        /// Mesec u svetloj temi (prelazak na tamnu), sunce u tamnoj.
+        void UpdateThemeButton()
+        {
+            ThemeButton.Content = ThemeManager.IsDark ? "" : "";
+            ThemeButton.ToolTip = ThemeManager.IsDark ? "Svetla tema" : "Tamna tema";
+            AutomationProperties.SetName(ThemeButton, (string)ThemeButton.ToolTip);
         }
 
         ChatViewModel ViewModel => DataContext as ChatViewModel;

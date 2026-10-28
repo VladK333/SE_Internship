@@ -1,7 +1,8 @@
 """Spaja odgovore (results/answers.jsonl) i ocene (results/answer_scores.json) u zbirni pregled.
 
-Pokretanje (iz SE_praksa):  python backend/evaluation/summarize_answers.py
+Pokretanje (iz SE_praksa):  python backend/evaluation/summarize_answers.py [model]
 Rezultat:                   backend/evaluation/results/answers.md
+Sa modelom (npr. gemma3:1b) cita answers_<model>.jsonl i answer_scores_<model>.json i pise answers_<model>.md.
 """
 import json
 import pathlib
@@ -9,12 +10,13 @@ import statistics
 import sys
 
 HERE = pathlib.Path(__file__).resolve().parent / "results"
+SUFFIX = "_" + sys.argv[1].replace(":", "-") if len(sys.argv) > 1 else ""
 
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    rows = [json.loads(line) for line in (HERE / "answers.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
-    scores_file = json.loads((HERE / "answer_scores.json").read_text(encoding="utf-8"))
+    rows = [json.loads(line) for line in (HERE / f"answers{SUFFIX}.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    scores_file = json.loads((HERE / f"answer_scores{SUFFIX}.json").read_text(encoding="utf-8"))
     scores = scores_file["scores"]
 
     answerable = [r for r in rows if r["kind"] == "answerable"]
@@ -34,7 +36,8 @@ def main():
     for k, v in summary:
         print(f"{k}: {v}")
 
-    lines = [f"# Evaluacija odgovora", "", f"Status ocena: **{scores_file['status']}**", "",
+    title = f"# Evaluacija odgovora ({sys.argv[1]})" if SUFFIX else "# Evaluacija odgovora"
+    lines = [title, "", f"Status ocena: **{scores_file['status']}**", "",
              "| Metrika | Rezultat |", "| --- | --- |"]
     lines += [f"| {k} | {v} |" for k, v in summary]
     lines += ["", "## Pitanja sa odgovorom", "", "| ID | Pitanje | Ocena | Obrazloženje | Vreme |", "| --- | --- | --- | --- | --- |"]
@@ -45,7 +48,7 @@ def main():
     for r in unanswerable:
         who = "prag" if r["seconds"] < 5 else "model"
         lines.append(f"| {r['id']} | {r['question']} | {'da (' + who + ')' if r['refused'] else 'NE'} | {r['seconds']:.1f} s |")
-    (HERE / "answers.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (HERE / f"answers{SUFFIX}.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

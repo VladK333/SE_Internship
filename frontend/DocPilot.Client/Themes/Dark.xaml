@@ -1,0 +1,23 @@
+<!-- Tamna tema; isti ključevi kao Light.xaml. Boje odgovora u WebView2 su u Assets/docpilot.css (html.dark). -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="AccentBrush" Color="#8AB4F8" />
+    <SolidColorBrush x:Key="WindowBackground" Color="#16191F" />
+    <SolidColorBrush x:Key="SurfaceBackground" Color="#1E222A" />
+    <SolidColorBrush x:Key="MainText" Color="#E6E8EB" />
+    <SolidColorBrush x:Key="MutedText" Color="#9AA3AF" />
+    <SolidColorBrush x:Key="LinkText" Color="#8AB4F8" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#343A46" />
+    <SolidColorBrush x:Key="UserBubble" Color="#2F5F9E" />
+    <SolidColorBrush x:Key="UserBubbleText" Color="White" />
+    <SolidColorBrush x:Key="AssistantBubble" Color="#232832" />
+    <SolidColorBrush x:Key="ErrorBackground" Color="#3A1F22" />
+    <SolidColorBrush x:Key="ErrorText" Color="#FF8A80" />
+    <SolidColorBrush x:Key="BusyBackground" Color="#1B2029" />
+    <SolidColorBrush x:Key="HoverBackground" Color="#2A303A" />
+    <SolidColorBrush x:Key="SelectedBackground" Color="#2A3A52" />
+    <SolidColorBrush x:Key="PrimaryButton" Color="#2F5F9E" />
+    <SolidColorBrush x:Key="PrimaryButtonHover" Color="#3B72BA" />
+    <SolidColorBrush x:Key="PrimaryButtonDisabled" Color="#2A303A" />
+    <SolidColorBrush x:Key="PrimaryButtonDisabledText" Color="#6B7280" />
+</ResourceDictionary>

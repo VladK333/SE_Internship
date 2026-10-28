@@ -3,13 +3,20 @@
 Odgovori se cuvaju posle svakog pitanja u results/answers.jsonl, pa se prekinuto pokretanje
 nastavlja tamo gde je stalo. Ocene 1-3 se upisuju posebno, u results/answer_scores.json.
 
-Pokretanje (iz SE_praksa, Ollama mora da radi):  python backend/evaluation/evaluate_answers.py
+Pokretanje (iz SE_praksa, Ollama mora da radi):  python backend/evaluation/evaluate_answers.py [model]
+Bez argumenta koristi podrazumevani model (llama3) i pise results/answers.jsonl; sa drugim modelom
+(npr. gemma3:1b, bonus poredjenje modela) pise results/answers_<model>.jsonl.
 Na racunaru bez graficke kartice traje oko 1 sat (llama3 8B, 1-4 min po pitanju).
 """
 import json
+import os
 import pathlib
 import sys
 import time
+
+MODEL = sys.argv[1] if len(sys.argv) > 1 else None
+if MODEL:
+    os.environ["OLLAMA_MODEL"] = MODEL   # mora pre importa app, koji cita promenljivu pri ucitavanju
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from fastapi.testclient import TestClient  # noqa: E402
@@ -17,7 +24,7 @@ from fastapi.testclient import TestClient  # noqa: E402
 from app.main import app  # noqa: E402
 
 HERE = pathlib.Path(__file__).resolve().parent
-OUT = HERE / "results" / "answers.jsonl"
+OUT = HERE / "results" / (f"answers_{MODEL.replace(':', '-')}.jsonl" if MODEL else "answers.jsonl")
 
 
 def main():

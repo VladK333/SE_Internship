@@ -29,6 +29,7 @@ Potrebno: [Ollama](https://ollama.com) sa modelom `llama3` (`ollama pull llama3`
 
 **1. Backend (VS Code):** otvori folder `SE_praksa` u VS Code-u i pritisni **F5** (konfiguracija „DocPilot backend“ u
 `.vscode/launch.json`). Server je spreman kada se u terminalu pojavi `Application startup complete`.
+Bonus funkcije: streaming odgovora, ocena 👍/👎 (log u `data/feedback/`), svetla / tamna tema (dugme u zaglavlju).
 API i interaktivna dokumentacija: `http://127.0.0.1:8000/docs` (opis u [backend/API.md](backend/API.md)).
 
 **2. Klijent (Visual Studio):** otvori `frontend/DocPilot.sln` i pritisni **F5**. Pokreće se projekat `DocPilot.Client`.
@@ -57,8 +58,10 @@ Backend bez VS Code-a: `python -m uvicorn app.main:app --app-dir backend --port 
 | Pitanja bez odgovora ispravno odbijena | 15/15 (100 %) |
 | Prosečna ocena odgovora (1–3) | 2,82 |
 
+Poređenje modela (bonus): gemma3 1B ima prosečnu ocenu 2,24 i 14/15 odbijenih, ali je oko 4 puta brža (medijana 15 s naprema 64 s).
+
 Ponavljanje: `python backend\evaluation\evaluate.py` (pretraga, par sekundi) i
-`python backend\evaluation\evaluate_answers.py` (odgovori sa LLM-om, oko 45 min).
+`python backend\evaluation\evaluate_answers.py [model]` (odgovori sa LLM-om, oko 45 min za llama3).
 
 ## Dokumenti
 

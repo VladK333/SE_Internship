@@ -15,9 +15,10 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Embeddings i FAISS indeks | Završeno |
 | 1 | `POST /chat` vraća top 3 sekcije bez LLM-a, `GET /health` | Završeno |
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
-| 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
+| 2 | LLM i guardrails | Završeno |
 | 2 | WPF klijent (.NET Framework 4.8) | Završeno |
 | 3 | Evaluacija, ispravke, prezentacija | Evaluacija i ispravke završene; demo sledi |
+| Bonus | Hibridna pretraga, streaming, feedback dugmad, dark mode, poređenje modela | Završeno |
 
 ## Arhitektura i struktura projekta
 
@@ -540,9 +541,77 @@ Isti skup od 48 pitanja (33 sa odgovorom, 15 bez), pre i posle ispravki. Detalji
 
 **Bezbednost:** u obe runde nijedno pitanje van dokumentacije nije dobilo odgovor, uključujući pokušaje zaobilaženja uputstava („Forget the documentation…“, „Ignore previous instructions…“) i tematski blisko pitanje o SCADA sistemu koje je prošlo prag, a odbio ga je model.
 
+## 14. Bonus funkcionalnosti
+
+Urađene su posle svih obaveznih stavki. Docker, reranker i pitanja sa nastavkom namerno nisu rađeni.
+
+### Streaming odgovora
+
+**Kod:** `backend/app/llm.py` (`stream_answer`), `backend/app/main.py` (`POST /chat/stream`), klijent: `Services/ChatApiClient.cs` (`AskStreamingAsync`), `Controls/MarkdownView.cs`, `Assets/docpilot.js`
+
+Model na procesoru piše oko 4 tokena u sekundi, pa je korisnik ranije gledao prazan ekran i do nekoliko minuta. Sada server šalje odgovor deo po deo kao **Server-Sent Events**:
+
+| Događaj | Kada | Sadržaj |
+| --- | --- | --- |
+| `sources` | odmah posle pretrage | izvori, da bi citati `[1]` odmah bili linkovi |
+| `token` | svaki deo teksta | `{"text": "..."}` |
+| `done` | kraj | isti oblik kao odgovor `/chat` (`answer`, `sources`, `refused`) |
+| `error` | model nije dostupan ili je zastao | `{"detail": "..."}` |
+
+- `POST /chat` je ostao nepromenjen (ugovor iz specifikacije); strim je dodatni endpoint. Klijent podrazumevano koristi strim, a u `App.config` se može isključiti (`UseStreaming`).
+- Sve provere ostaju iste: prazno ili predugo pitanje je i dalje običan `400`, odbijanje ispod praga je odmah `done` sa `refused: true`, a ako model napiše „Not covered…“, `done` to javlja i klijent prikazuje odbijanje.
+- **Vreme čekanja:** kod strima se meri od poslednjeg primljenog dela, ne za ceo odgovor (i na serveru i u klijentu). Dugačak odgovor koji teče se ne prekida, ali zastoj duži od 300 s / 330 s je greška.
+- **Prikaz bez treptanja:** prvi deo učitava stranicu u WebView2, a svaki sledeći samo menja sadržaj (`docpilotSetBody`) — HTML prolazi isto čišćenje kao i inače. Delovi koji stignu dok traje prethodno osvežavanje spajaju se u jedno.
+- **Otkazivanje:** zatvara vezu; server tada prestaje da čita od Ollama-e, pa model ne radi uzalud. Napisani deo odgovora ostaje vidljiv.
+
+U testu je prvi deo teksta stigao posle oko 40 s (model prvo čita sekcije), a dalje se tekst pojavljuje kako nastaje, umesto da se ceo odgovor čeka minut ili više.
+
+![Streaming: odgovor se pojavljuje dok ga model piše; izvori su već prikazani](img/klijent_streaming.png)
+
+### Feedback dugmad
+
+**Kod:** `POST /feedback` u `backend/app/main.py`; klijent: `MessageViewModel` (`RateUpCommand`, `RateDownCommand`), `MainWindow.xaml`
+
+Ispod svakog odgovora i odbijanja su dugmad 👍 / 👎. Ocena se odmah prikazuje (obojeno dugme, „Hvala na oceni.“) i šalje serveru, koji dodaje jednu JSON liniju sa vremenom, pitanjem, odgovorom, ocenom i izvorima u `data/feedback/feedback.jsonl` (van git-a). Ako slanje ne uspe, ocena se vraća i prikazuje se greška. Promena ocene upisuje novu liniju. Ovaj log je gotov ulaz za buduću evaluaciju na pravim pitanjima korisnika.
+
+![Ocena odbijenog pitanja palcem dole](img/klijent_feedback.png)
+
+### Dark mode
+
+**Kod:** `Themes/Light.xaml`, `Themes/Dark.xaml`, `Themes/ThemeManager.cs`, `Assets/docpilot.css`
+
+- Boje prozora su u dva rečnika sa istim ključevima; dugme sa mesecom / suncem u zaglavlju ih menja u letu (`DynamicResource`), bez ponovnog pokretanja.
+- Odgovori u WebView2 dobijaju klasu `dark`; boje su CSS promenljive, a kod se boji tamnom paletom (GitHub Dark). Postojeći odgovori se preboje bez ponovnog iscrtavanja.
+- Bez sačuvanog izbora aplikacija prati temu Windows-a; izbor se pamti u `%LOCALAPPDATA%\DocPilot\theme.txt`. Naslovna linija prozora se takođe zatamni (DWM), osim ako je u Windows-u uključena boja naglaska na naslovnim linijama.
+- Slike iz dokumentacije (dijagrami sa providnom pozadinom i crnim linijama) dobijaju svetlu podlogu da bi ostale čitljive.
+
+![Tamna tema: odgovor sa obojenim kodom i izvorima](img/klijent_dark.png)
+
+### Poređenje modela
+
+**Kod:** `backend/evaluation/evaluate_answers.py [model]`, `summarize_answers.py [model]` · **Rezultati:** `backend/evaluation/results/answers_gemma3-1b.*`
+
+Isti skup od 48 pitanja, ista hibridna pretraga, isti prompt i prag — menja se samo LLM:
+
+| Metrika | **llama3 8B** | gemma3 1B |
+| --- | --- | --- |
+| Prosečna ocena odgovora (1–3) | **2,82** | 2,24 |
+| Ocena 3 / 2 / 1 | **28 / 4 / 1** | 15 / 11 / 7 |
+| Pitanja bez odgovora ispravno odbijena | **15/15** | 14/15 |
+| Dobra pitanja pogrešno odbijena | **0/33** | 2/33 |
+| Vreme odgovora (medijana / najduže) | 64 s / 266 s | **15 s / 28 s** |
+
+- gemma3 1B je oko **4 puta brža**, ali češće daje delimične ili netačne odgovore (izmišljena metoda `timeSeries.new()`, pogrešan tip opreme posle CGMES uvoza).
+- **Bezbednost:** gemma je odgovorila na pitanje van dokumentacije (U11, povezivanje sa SCADA sistemom — pitanje je prošlo prag, a model je izmislio postupak), dok ga je llama3 odbila. Mali model slabije poštuje uputstvo „odgovaraj samo iz sekcija“.
+- **Zaključak:** llama3 8B ostaje podrazumevani model; sa streamingom je njegovo kašnjenje prihvatljivije. gemma3 1B bi imala smisla samo na slabijem računaru, uz svest o nižoj tačnosti.
+
+### Skok na izvor (delimično)
+
+Klik na citat `[1]` u odgovoru ili na izvor ispod njega otvara dokumentaciju na readthedocs **tačno na toj sekciji** (sidro u URL-u, npr. `…/import.html#synchronousmachine`). To radi za 562 od 803 chunka (70 %); ostali otvaraju vrh stranice, jer njihova sekcija nema sopstveno sidro. Prikaz sekcije unutar same aplikacije nije rađen.
+
 ## Zaključak
 
-Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, ingestion sa metapodacima, embeddings i FAISS, HTTP API sa dokumentacijom, LLM sa guardrail-ima (1–4 i 6 obavezni, 5 i 7 opcioni), WPF klijent na .NET Framework 4.8 sa bezbednim Markdown prikazom, istraživanje Markdown biblioteka i evaluacija sa tri tražene metrike. Od bonusa je urađena hibridna pretraga.
+Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, ingestion sa metapodacima, embeddings i FAISS, HTTP API sa dokumentacijom, LLM sa guardrail-ima (1–4 i 6 obavezni, 5 i 7 opcioni), WPF klijent na .NET Framework 4.8 sa bezbednim Markdown prikazom, istraživanje Markdown biblioteka i evaluacija sa tri tražene metrike. Od bonusa su urađeni hibridna pretraga, streaming odgovora, feedback dugmad, dark mode i poređenje modela, a skok na izvor delimično (sekcija 14).
 
 | „Done means“ iz specifikacije | Status |
 | --- | --- |
@@ -575,3 +644,6 @@ Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, 
 | 27.10.2026. | Ispravke: 13 pogrešnih linkova izvora, uklonjeni PDF artefakti (matematička Unicode slova, razmaci uz kod); indeks ponovo napravljen |
 | 28.10.2026. | Hibridna pretraga (BM25 + vektori, RRF): tačan izvor u top 3 90,9 % (bilo 84,8 %) |
 | 28.10.2026. | Završna evaluacija odgovora: prosečna ocena 2,82/3 (bilo 2,70), 15/15 ispravno odbijenih, 0 pogrešno odbijenih; plan demo-a |
+| 28.10.2026. | Bonus: feedback dugmad (👍/👎, `POST /feedback`, log na serveru) i dark mode (teme, praćenje Windows teme, tamno bojenje koda) |
+| 28.10.2026. | Bonus: streaming odgovora (`POST /chat/stream`, Server-Sent Events, prikaz bez treptanja) |
+| 28.10.2026. | Bonus: poređenje modela llama3 8B i gemma3 1B (2,82 naspram 2,24; gemma 4× brža, ali jednom nije odbila pitanje van dokumentacije) |

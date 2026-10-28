@@ -5,6 +5,7 @@ Podesavanja (promenljive okruzenja):
   OLLAMA_MODEL    podrazumevano llama3
   LLM_TIMEOUT     sekunde, podrazumevano 300 (llama3 8B na CPU odgovara za 1-4 min)
 """
+import json
 import os
 
 import httpx
@@ -40,16 +41,20 @@ def build_user_message(question, sections):
     return "\n\n".join(parts)
 
 
-def generate_answer(question, sections):
-    payload = {
+def _payload(question, sections, stream):
+    return {
         "model": OLLAMA_MODEL,
-        "stream": False,
+        "stream": stream,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": build_user_message(question, sections)},
         ],
         "options": {"temperature": 0.1, "num_ctx": 8192},
     }
+
+
+def generate_answer(question, sections):
+    payload = _payload(question, sections, stream=False)
     try:
         r = httpx.post(f"{OLLAMA_URL}/api/chat", json=payload, timeout=LLM_TIMEOUT)
         r.raise_for_status()
@@ -58,6 +63,31 @@ def generate_answer(question, sections):
     except httpx.HTTPError as e:
         raise LLMError(f"Ollama nije dostupna na {OLLAMA_URL} ({e}).") from e
     return r.json()["message"]["content"].strip()
+
+
+def stream_answer(question, sections):
+    """Isto kao generate_answer, ali vraca delove teksta cim ih model napise (bonus: streaming).
+
+    LLM_TIMEOUT ovde vazi za cekanje na sledeci deo, ne za ceo odgovor: dok model pise, odgovor
+    moze da traje duze, ali ako zastane (ili predugo cita sekcije pre prvog dela), prijavljuje se greska.
+    """
+    payload = _payload(question, sections, stream=True)
+    try:
+        with httpx.stream("POST", f"{OLLAMA_URL}/api/chat", json=payload, timeout=LLM_TIMEOUT) as r:
+            r.raise_for_status()
+            for line in r.iter_lines():
+                if not line:
+                    continue
+                part = json.loads(line)
+                text = part.get("message", {}).get("content", "")
+                if text:
+                    yield text
+                if part.get("done"):
+                    break
+    except httpx.TimeoutException as e:
+        raise LLMError(f"Model nije nastavio odgovor za {LLM_TIMEOUT:.0f} s.") from e
+    except httpx.HTTPError as e:
+        raise LLMError(f"Ollama nije dostupna na {OLLAMA_URL} ({e}).") from e
 
 
 def status():

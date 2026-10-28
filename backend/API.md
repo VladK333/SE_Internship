@@ -22,6 +22,7 @@ Embedding model i indeks se učitavaju jednom, pri startu (oko 10 s).
 | `LLM_TIMEOUT` | `300` | Najduže čekanje na model, u sekundama |
 | `REFUSAL_THRESHOLD` | `0.70` | Najmanji skor sličnosti da bi pitanje stiglo do modela |
 | `RETRIEVAL_MODE` | `hybrid` | `hybrid` (BM25 + vektori, Reciprocal Rank Fusion) ili `vector` (samo vektori) |
+| `FEEDBACK_FILE` | `data/feedback/feedback.jsonl` | Gde se čuvaju ocene odgovora iz klijenta |
 
 ## `POST /chat`
 
@@ -75,6 +76,62 @@ odgovor i napiše „Not covered in the documentation.“, i to se vraća kao `r
 | `503` | Ollama nije pokrenuta | `Ollama nije dostupna na http://127.0.0.1:11434 (...)` |
 | `503` | Model nije odgovorio na vreme | `Model nije odgovorio za 300 s.` |
 | `422` | Telo zahteva nije ispravan JSON ili nema polje `question` | (FastAPI validaciona greška) |
+
+## `POST /chat/stream`
+
+Isto pitanje i iste provere kao `/chat`, ali odgovor stiže deo po deo, kao **Server-Sent Events**
+(`text/event-stream`), dok ga model piše (bonus „streaming“). Klijent ga koristi podrazumevano.
+
+| Događaj | Kada | `data` |
+| --- | --- | --- |
+| `sources` | odmah posle pretrage | `{"sources": [...]}` (isti oblik kao u `/chat`) |
+| `token` | za svaki deo teksta | `{"text": "CGMES versions"}` |
+| `done` | na kraju | ceo odgovor, isti oblik kao `/chat`: `{"answer", "sources", "refused"}` |
+| `error` | Ollama ne radi ili model zastane | `{"detail": "..."}` |
+
+```
+event: sources
+data: {"sources": [{"title": "Format specification", ...}]}
+
+event: token
+data: {"text": "CGMES"}
+
+event: token
+data: {"text": " versions 2.4.15 and 3.0 are supported. [1]"}
+
+event: done
+data: {"answer": "CGMES versions 2.4.15 and 3.0 are supported. [1]", "sources": [...], "refused": false}
+```
+
+- Prazno ili predugo pitanje vraća `400` pre početka strima, kao `/chat`.
+- Odbijanje ispod praga odmah šalje samo `done` sa `refused: true`. Ako model napiše „Not covered in the documentation.“,
+  delovi tog teksta stignu kao `token`, a `done` ima `refused: true` i prazne izvore.
+- `LLM_TIMEOUT` ovde važi za čekanje na **sledeći** deo, ne za ceo odgovor.
+
+## `POST /feedback`
+
+Ocena odgovora palcem gore ili dole (bonus „feedback dugmad“). Klijent šalje pitanje, odgovor i ocenu, a server
+dodaje jednu JSON liniju sa vremenom u `FEEDBACK_FILE`. Ako korisnik promeni ocenu, upisuje se nova linija; važi poslednja.
+
+```json
+{
+  "question": "Which CGMES versions are supported?",
+  "answer": "Current supported versions of CGMES are 2.4.15 and 3.0. [1]",
+  "rating": "up",
+  "refused": false,
+  "sources": ["Grid exchange formats > CIM-CGMES > Format specification"]
+}
+```
+
+| Polje | Tip | Opis |
+| --- | --- | --- |
+| `question` | string | Pitanje, najviše 1000 karaktera |
+| `answer` | string | Ocenjeni odgovor |
+| `rating` | `"up"` ili `"down"` | Ocena |
+| `refused` | bool | Da li je ocenjeno odbijanje (opciono, podrazumevano `false`) |
+| `sources` | niz stringova | Putanje naslova prikazanih izvora (opciono) |
+
+Odgovor je `204 No Content`; neispravno telo (npr. `rating: "meh"`) vraća `422`.
 
 ## `GET /health`
 

@@ -7,6 +7,9 @@ __pycache__/
 data/index/*
 !data/index/.gitkeep
 
+# ocene odgovora iz klijenta (feedback dugmad)
+data/feedback/
+
 # .NET / Visual Studio
 bin/
 obj/

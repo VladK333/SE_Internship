@@ -5,7 +5,7 @@
         xmlns:controls="clr-namespace:DocPilot.Client.Controls"
         Title="DocPilot" Width="1000" Height="750" MinWidth="600" MinHeight="450"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource WindowBackground}"
+        Background="{DynamicResource WindowBackground}"
         FontFamily="Segoe UI" FontSize="14">
 
     <Window.Resources>
@@ -18,23 +18,23 @@
         <DataTemplate x:Key="MessageTemplate" DataType="{x:Type vm:MessageViewModel}">
             <Border x:Name="Bubble" Margin="0,6" Padding="14,10" CornerRadius="8" MaxWidth="760"
                     HorizontalAlignment="Left" BorderThickness="1"
-                    Background="{StaticResource AssistantBubble}" BorderBrush="{StaticResource BorderBrush}">
+                    Background="{DynamicResource AssistantBubble}" BorderBrush="{DynamicResource BorderBrush}">
                 <StackPanel>
                     <TextBox x:Name="MessageText" Text="{Binding Text, Mode=OneWay}" IsReadOnly="True"
                              TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0"
-                             Foreground="#1F2328" />
+                             Foreground="{DynamicResource MainText}" />
                     <ContentControl x:Name="MarkdownHost" Content="{Binding}" Visibility="Collapsed" Focusable="False" />
 
                     <!-- izvori kao linkovi ispod odgovora -->
                     <StackPanel Margin="0,10,0,0"
                                 Visibility="{Binding HasSources, Converter={StaticResource BoolToVisibility}}">
                         <TextBlock Text="Izvori" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="{StaticResource MutedText}" />
+                                   Foreground="{DynamicResource MutedText}" />
                         <ItemsControl ItemsSource="{Binding SourceLinks}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate DataType="{x:Type vm:SourceLinkViewModel}">
                                     <TextBlock Margin="0,2,0,0" FontSize="13" ToolTip="{Binding HeadingPath}">
-                                        <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="OnSourceLinkClicked">
+                                        <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="OnSourceLinkClicked" Foreground="{DynamicResource LinkText}">
                                             <Run Text="{Binding Label, Mode=OneWay}" />
                                         </Hyperlink>
                                     </TextBlock>
@@ -42,10 +42,29 @@
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
                     </StackPanel>
+
+                    <!-- ocena odgovora palcem gore / dole (bonus: feedback dugmad), čuva se na serveru -->
+                    <StackPanel Orientation="Horizontal" Margin="-6,8,0,-4"
+                                Visibility="{Binding CanRate, Converter={StaticResource BoolToVisibility}}">
+                        <Button x:Name="RateUp" Style="{StaticResource IconButton}" Content="&#xE8E1;"
+                                ToolTip="Dobar odgovor" AutomationProperties.Name="Dobar odgovor" Command="{Binding RateUpCommand}" />
+                        <Button x:Name="RateDown" Style="{StaticResource IconButton}" Content="&#xE8E0;"
+                                ToolTip="Loš odgovor" AutomationProperties.Name="Loš odgovor" Command="{Binding RateDownCommand}" Margin="2,0,0,0" />
+                        <TextBlock Text="{Binding FeedbackStatus}" Margin="8,0,0,0" VerticalAlignment="Center"
+                                   FontSize="12" Foreground="{DynamicResource MutedText}" />
+                    </StackPanel>
                 </StackPanel>
             </Border>
 
             <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsRatedUp}" Value="True">
+                    <Setter TargetName="RateUp" Property="Foreground" Value="{DynamicResource AccentBrush}" />
+                    <Setter TargetName="RateUp" Property="Background" Value="{DynamicResource SelectedBackground}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsRatedDown}" Value="True">
+                    <Setter TargetName="RateDown" Property="Foreground" Value="{DynamicResource ErrorText}" />
+                    <Setter TargetName="RateDown" Property="Background" Value="{DynamicResource ErrorBackground}" />
+                </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Assistant}">
                     <Setter TargetName="MessageText" Property="Visibility" Value="Collapsed" />
                     <Setter TargetName="MarkdownHost" Property="ContentTemplate" Value="{StaticResource MarkdownTemplate}" />
@@ -54,18 +73,18 @@
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.User}">
                     <Setter TargetName="Bubble" Property="HorizontalAlignment" Value="Right" />
                     <Setter TargetName="Bubble" Property="MaxWidth" Value="620" />
-                    <Setter TargetName="Bubble" Property="Background" Value="{StaticResource UserBubble}" />
-                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{StaticResource UserBubble}" />
-                    <Setter TargetName="MessageText" Property="Foreground" Value="White" />
+                    <Setter TargetName="Bubble" Property="Background" Value="{DynamicResource UserBubble}" />
+                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource UserBubble}" />
+                    <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource UserBubbleText}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Refused}">
-                    <Setter TargetName="MessageText" Property="Foreground" Value="{StaticResource MutedText}" />
+                    <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource MutedText}" />
                     <Setter TargetName="MessageText" Property="FontStyle" Value="Italic" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Error}">
-                    <Setter TargetName="Bubble" Property="Background" Value="{StaticResource ErrorBackground}" />
-                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{StaticResource ErrorBackground}" />
-                    <Setter TargetName="MessageText" Property="Foreground" Value="{StaticResource ErrorText}" />
+                    <Setter TargetName="Bubble" Property="Background" Value="{DynamicResource ErrorBackground}" />
+                    <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource ErrorBackground}" />
+                    <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource ErrorText}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -80,13 +99,13 @@
         </Grid.RowDefinitions>
 
         <!-- zaglavlje sa statusom servera -->
-        <Border Grid.Row="0" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1"
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
                 Padding="20,12">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="DocPilot" FontSize="20" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" />
+                    <TextBlock Text="DocPilot" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" />
                     <TextBlock Text="PowSyBl dokumentacija" Margin="12,0,0,0" VerticalAlignment="Bottom"
-                               Foreground="{StaticResource MutedText}" />
+                               Foreground="{DynamicResource MutedText}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
                     <Ellipse Width="9" Height="9" Margin="0,0,8,0">
@@ -102,7 +121,11 @@
                         </Ellipse.Style>
                     </Ellipse>
                     <TextBlock Text="{Binding ServerStatus}" MaxWidth="520" TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding ServerStatus}" Foreground="{StaticResource MutedText}" FontSize="13" />
+                               ToolTip="{Binding ServerStatus}" Foreground="{DynamicResource MutedText}" FontSize="13"
+                               VerticalAlignment="Center" />
+                    <!-- svetla / tamna tema (bonus: dark mode); ikonu i opis postavlja MainWindow.xaml.cs -->
+                    <Button x:Name="ThemeButton" Style="{StaticResource IconButton}" Margin="14,0,0,0" FontSize="15"
+                            Click="OnThemeButtonClick" />
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -127,24 +150,24 @@
                 </Style>
             </StackPanel.Style>
             <TextBlock Text="Postavi pitanje o PowSyBl dokumentaciji" FontSize="18" FontWeight="SemiBold"
-                       HorizontalAlignment="Center" Foreground="{StaticResource AccentBrush}" />
-            <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center" Foreground="{StaticResource MutedText}"
+                       HorizontalAlignment="Center" Foreground="{DynamicResource AccentBrush}" />
+            <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource MutedText}"
                        Text="Na primer: „Which CGMES versions are supported?“ ili „How do I run a security analysis with iTools?“. Pitanja treba postavljati na engleskom, jer je dokumentacija na engleskom." />
         </StackPanel>
 
         <!-- indikator učitavanja -->
-        <Border Grid.Row="2" Padding="20,8" Background="#EEF2F7"
+        <Border Grid.Row="2" Padding="20,8" Background="{DynamicResource BusyBackground}"
                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
             <DockPanel>
-                <Button DockPanel.Dock="Right" Content="Otkaži" Command="{Binding CancelCommand}" Padding="12,3" />
+                <Button DockPanel.Dock="Right" Content="Otkaži" Command="{Binding CancelCommand}" Padding="12,3" Style="{StaticResource SecondaryButton}" />
                 <ProgressBar IsIndeterminate="True" Width="120" Height="6" VerticalAlignment="Center" />
-                <TextBlock Margin="12,0" VerticalAlignment="Center" Foreground="{StaticResource MutedText}"
+                <TextBlock Margin="12,0" VerticalAlignment="Center" Foreground="{DynamicResource MutedText}"
                            Text="DocPilot traži odgovor u dokumentaciji… Lokalni model može da piše i do nekoliko minuta." />
             </DockPanel>
         </Border>
 
         <!-- unos pitanja -->
-        <Border Grid.Row="3" Background="White" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0"
+        <Border Grid.Row="3" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
                 Padding="20,12">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -160,6 +183,8 @@
                          Text="{Binding Question, UpdateSourceTrigger=PropertyChanged}"
                          AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
                          MinHeight="44" MaxHeight="140" Padding="8,10" VerticalContentAlignment="Center"
+                         Background="{DynamicResource SurfaceBackground}" Foreground="{DynamicResource MainText}"
+                         BorderBrush="{DynamicResource BorderBrush}" CaretBrush="{DynamicResource MainText}"
                          PreviewKeyDown="OnQuestionKeyDown" />
                 <Button Grid.Column="1" Content="Pošalji" Command="{Binding SendCommand}" Margin="10,0,0,0"
                         Padding="22,0" MinHeight="44" Style="{StaticResource PrimaryButton}" />
@@ -168,17 +193,17 @@
                     <TextBlock DockPanel.Dock="Right" FontSize="12">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
-                                <Setter Property="Foreground" Value="{StaticResource MutedText}" />
+                                <Setter Property="Foreground" Value="{DynamicResource MutedText}" />
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsQuestionTooLong}" Value="True">
-                                        <Setter Property="Foreground" Value="{StaticResource ErrorText}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource ErrorText}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
                         </TextBlock.Style>
                         <Run Text="{Binding Question.Length, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding Source={x:Static vm:ChatViewModel.MaxQuestionLength}, Mode=OneWay}" />
                     </TextBlock>
-                    <TextBlock Text="Enter šalje · Shift+Enter novi red" FontSize="12" Foreground="{StaticResource MutedText}" />
+                    <TextBlock Text="Enter šalje · Shift+Enter novi red" FontSize="12" Foreground="{DynamicResource MutedText}" />
                 </DockPanel>
             </Grid>
         </Border>

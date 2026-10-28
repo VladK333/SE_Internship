@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DocPilot.Client.Models;
 using DocPilot.Client.Rendering;
+using DocPilot.Client.Themes;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 
@@ -31,13 +32,28 @@ namespace DocPilot.Client.Controls
 
         readonly WebView2CompositionControl web;
         Task initialization;
+        bool pageLoaded, rendering, renderAgain;
 
         public MarkdownView()
         {
             web = new WebView2CompositionControl { DefaultBackgroundColor = System.Drawing.Color.Transparent };
             Content = web;
             Height = 24;   // prava visina stiže iz stranice (poruka "height")
-            Loaded += async (s, e) => await RenderAsync();
+            Loaded += async (s, e) =>
+            {
+                ThemeManager.ThemeChanged += OnThemeChanged;
+                await RenderAsync();
+            };
+            Unloaded += (s, e) => ThemeManager.ThemeChanged -= OnThemeChanged;
+        }
+
+        /// Promena teme bez ponovnog iscrtavanja: samo klasa "dark" na &lt;html&gt; (boje su u docpilot.css).
+        async void OnThemeChanged(object sender, EventArgs e)
+        {
+            if (web.CoreWebView2 == null)
+                return;
+            var dark = ThemeManager.IsDark ? "true" : "false";
+            await web.CoreWebView2.ExecuteScriptAsync($"document.documentElement.classList.toggle('dark', {dark});");
         }
 
         public string Markdown
@@ -69,12 +85,34 @@ namespace DocPilot.Client.Controls
                 await view.RenderAsync();
         }
 
+        /// Prvi prikaz učitava celu stranicu; svaka sledeća promena (delovi odgovora tokom strima) samo
+        /// zamenjuje sadržaj kroz docpilot.js, bez treptanja. Promene koje stignu dok prikaz traje
+        /// spajaju se u jedno osvežavanje, pa brzi delovi ne prave red čekanja.
         async Task RenderAsync()
         {
+            if (rendering)
+            {
+                renderAgain = true;
+                return;
+            }
+            rendering = true;
             try
             {
                 await (initialization ?? (initialization = InitializeAsync()));
-                web.NavigateToString(MarkdownRenderer.RenderPage(Markdown, Sources));
+                do
+                {
+                    renderAgain = false;
+                    if (pageLoaded)
+                    {
+                        var body = JsonSerializer.Serialize(MarkdownRenderer.RenderBody(Markdown, Sources));
+                        await web.CoreWebView2.ExecuteScriptAsync($"window.docpilotSetBody({body});");
+                    }
+                    else
+                    {
+                        await LoadPageAsync(MarkdownRenderer.RenderPage(Markdown, Sources, ThemeManager.IsDark));
+                        pageLoaded = true;
+                    }
+                } while (renderAgain);
             }
             catch (Exception ex)
             {
@@ -87,6 +125,23 @@ namespace DocPilot.Client.Controls
                 };
                 Height = double.NaN;
             }
+            finally
+            {
+                rendering = false;
+            }
+        }
+
+        Task LoadPageAsync(string html)
+        {
+            var loaded = new TaskCompletionSource<bool>();
+            void OnCompleted(object s, CoreWebView2NavigationCompletedEventArgs e)
+            {
+                web.CoreWebView2.NavigationCompleted -= OnCompleted;
+                loaded.TrySetResult(e.IsSuccess);
+            }
+            web.CoreWebView2.NavigationCompleted += OnCompleted;
+            web.NavigateToString(html);
+            return loaded.Task;
         }
 
         async Task InitializeAsync()

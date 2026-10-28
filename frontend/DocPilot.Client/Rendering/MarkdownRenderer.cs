@@ -47,9 +47,9 @@ namespace DocPilot.Client.Rendering
         static readonly Regex CitationPattern = new Regex(@"\[(\d{1,2})\](?!\()", RegexOptions.Compiled);
         static readonly Regex CitationText = new Regex(@"^\[\d{1,2}\]$", RegexOptions.Compiled);
 
-        /// Kompletna HTML stranica za prikaz jednog odgovora.
-        public static string RenderPage(string markdown, IReadOnlyList<Source> sources = null) =>
-            WrapInPage(RenderBody(markdown, sources));
+        /// Kompletna HTML stranica za prikaz jednog odgovora; dark = tamna tema (klasa "dark" na &lt;html&gt;).
+        public static string RenderPage(string markdown, IReadOnlyList<Source> sources = null, bool dark = false) =>
+            WrapInPage(RenderBody(markdown, sources), dark);
 
         /// Samo HTML sadržaj (bez &lt;html&gt;, &lt;head&gt;); koristi se i u testovima.
         public static string RenderBody(string markdown, IReadOnlyList<Source> sources = null)
@@ -129,14 +129,15 @@ namespace DocPilot.Client.Rendering
             return sb.ToString();
         }
 
-        static string WrapInPage(string body)
+        static string WrapInPage(string body, bool dark)
         {
+            var htmlClass = dark ? @" class=""dark""" : "";
             var assets = "https://" + AssetsHost;
             var images = string.Join(" ", TrustedImageHosts.Select(h => "https://" + h));
             // 'unsafe-inline' za stilove je potreban jer Markdig poravnanje kolona u tabelama piše kao style atribut
             var csp = $"default-src 'none'; img-src {images}; style-src {assets} 'unsafe-inline'; script-src {assets}";
             return $@"<!doctype html>
-<html lang=""en"">
+<html lang=""en""{htmlClass}>
 <head>
 <meta charset=""utf-8"">
 <meta http-equiv=""Content-Security-Policy"" content=""{csp}"">
