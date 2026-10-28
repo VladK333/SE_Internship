@@ -1,14 +1,15 @@
 {
   "summary": {
-    "date": "2026-10-27",
+    "date": "2026-10-28",
+    "mode": "hybrid",
     "threshold": 0.7,
     "top_k": 3,
     "answerable": 33,
     "unanswerable": 15,
-    "source_in_top3": 28,
-    "source_in_top3_pct": 84.8,
-    "source_at_rank1": 24,
-    "source_at_rank1_pct": 72.7,
+    "source_in_top3": 30,
+    "source_in_top3_pct": 90.9,
+    "source_at_rank1": 25,
+    "source_at_rank1_pct": 75.8,
     "false_refusals": 0,
     "correctly_refused": 14,
     "correctly_refused_pct": 93.3
@@ -25,16 +26,16 @@
       "refused": false,
       "retrieved": [
         {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Identity of model equipments",
+          "score": 0.7604
+        },
+        {
           "heading_path": "Grid exchange formats > CIM-CGMES > Import",
           "score": 0.8262
         },
         {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import > iidm.import.cgmes.powsybl-triplestore",
-          "score": 0.8187
-        },
-        {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Conversion from CGMES to PowSyBl grid model",
-          "score": 0.8002
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Equipment containers: substations and voltage levels",
+          "score": 0.7477
         }
       ]
     },
@@ -44,7 +45,7 @@
       "expected_sources": [
         "CIM-CGMES > Import > SynchronousMachine"
       ],
-      "rank": null,
+      "rank": 2,
       "top_score": 0.793,
       "refused": false,
       "retrieved": [
@@ -53,12 +54,12 @@
           "score": 0.793
         },
         {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Conversion from CGMES to PowSyBl grid model",
-          "score": 0.783
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > SynchronousMachine",
+          "score": 0.7566
         },
         {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import",
-          "score": 0.7598
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Identity of model equipments",
+          "score": 0.7484
         }
       ]
     },
@@ -77,12 +78,12 @@
           "score": 0.8961
         },
         {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import > ConnectivityNode",
-          "score": 0.8529
-        },
-        {
           "heading_path": "Grid exchange formats > CIM-CGMES > Import > TopologicalNode",
           "score": 0.8473
+        },
+        {
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > ConnectivityNode",
+          "score": 0.8529
         }
       ]
     },
@@ -116,21 +117,21 @@
       "expected_sources": [
         "UCTE-DEF > Import > Options"
       ],
-      "rank": null,
+      "rank": 2,
       "top_score": 0.7738,
       "refused": false,
       "retrieved": [
-        {
-          "heading_path": "Grid exchange formats > UCTE-DEF > Import",
-          "score": 0.7738
-        },
         {
           "heading_path": "Grid exchange formats > UCTE-DEF > Export > Options",
           "score": 0.7716
         },
         {
-          "heading_path": "Grid exchange formats > UCTE-DEF > Import > From UCTE to IIDM",
-          "score": 0.7651
+          "heading_path": "Grid exchange formats > UCTE-DEF > Import > Options",
+          "score": 0.744
+        },
+        {
+          "heading_path": "Grid exchange formats > UCTE-DEF > Import",
+          "score": 0.7738
         }
       ]
     },
@@ -140,14 +141,10 @@
       "expected_sources": [
         "IIDM exchange formats > Export > iidm.export.xml.indent"
       ],
-      "rank": 2,
+      "rank": 1,
       "top_score": 0.7962,
       "refused": false,
       "retrieved": [
-        {
-          "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.export-mode",
-          "score": 0.7962
-        },
         {
           "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.indent",
           "score": 0.7779
@@ -155,6 +152,10 @@
         {
           "heading_path": "Grid exchange formats > IIDM exchange formats > Export > iidm.export.xml.skip-extensions",
           "score": 0.7646
+        },
+        {
+          "heading_path": "User documentation > iTools > iTools convert-network > Examples",
+          "score": 0.7592
         }
       ]
     },
@@ -226,8 +227,8 @@
           "score": 0.7882
         },
         {
-          "heading_path": "Grid exchange formats > PSS®E > Import",
-          "score": 0.7576
+          "heading_path": "Grid exchange formats > PSS®E > Import > psse.import.ignore-node-breaker-topology",
+          "score": 0.7351
         }
       ]
     },
@@ -246,12 +247,12 @@
           "score": 0.8517
         },
         {
-          "heading_path": "Grid exchange formats > AMPL > Export > iidm.export.ampl.exportRatioTapChangerVoltageTarget",
-          "score": 0.7577
-        },
-        {
           "heading_path": "Grid exchange formats > AMPL > Export > iidm.export.ampl.export-ratio-tap-changer-voltage-target",
           "score": 0.6996
+        },
+        {
+          "heading_path": "Grid exchange formats > AMPL > Export > iidm.export.ampl.exportRatioTapChangerVoltageTarget",
+          "score": 0.7577
         }
       ]
     },
@@ -295,12 +296,12 @@
           "score": 0.7336
         },
         {
-          "heading_path": "Grid model > Advanced > Reactive limits",
-          "score": 0.7266
-        },
-        {
           "heading_path": "Grid model > Network and subnetwork > Battery > Characteristics",
           "score": 0.7222
+        },
+        {
+          "heading_path": "Grid model > Grid model extensions > Battery short-circuit",
+          "score": 0.7013
         }
       ]
     },
@@ -363,16 +364,16 @@
       "refused": false,
       "retrieved": [
         {
-          "heading_path": "Grid model > Network and subnetwork > Transformers > Specifications",
-          "score": 0.8258
+          "heading_path": "Grid features > Network modifications > Other modifications > Phase tap changer position",
+          "score": 0.8036
         },
         {
           "heading_path": "Grid model > Advanced > Phase tap changer",
           "score": 0.8142
         },
         {
-          "heading_path": "Grid features > Network modifications > Other modifications > Phase tap changer position",
-          "score": 0.8036
+          "heading_path": "Grid model > Network and subnetwork > Transformers > Specifications",
+          "score": 0.8021
         }
       ]
     },
@@ -391,12 +392,12 @@
           "score": 0.8018
         },
         {
-          "heading_path": "Grid model > Grid model extensions > Generator short-circuit",
-          "score": 0.6807
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > Extensions",
+          "score": 0.6466
         },
         {
-          "heading_path": "Grid exchange formats > CIM-CGMES > Import > iidm.import.cgmes.store-cgmes-model-as-network-extension",
-          "score": 0.6663
+          "heading_path": "Grid model > Grid model extensions > Connectable position",
+          "score": 0.6473
         }
       ]
     },
@@ -464,12 +465,12 @@
           "score": 0.8417
         },
         {
-          "heading_path": "Grid features > Network reduction > Reduction > Default implementation",
-          "score": 0.7372
+          "heading_path": "Grid features > Network reduction > Reduction > Observers",
+          "score": 0.7365
         },
         {
-          "heading_path": "Grid features > Network reduction > Reduction > Replacements by dangling lines",
-          "score": 0.7366
+          "heading_path": "Grid features > Network reduction > Reduction > Default implementation",
+          "score": 0.7372
         }
       ]
     },
@@ -488,12 +489,12 @@
           "score": 0.8617
         },
         {
-          "heading_path": "Grid features > Working with subnetworks > Detaching a subnetwork",
-          "score": 0.7642
-        },
-        {
           "heading_path": "Grid features > Working with subnetworks > Concept of subnetwork",
           "score": 0.759
+        },
+        {
+          "heading_path": "Grid features > Working with subnetworks > Importing a network",
+          "score": 0.7225
         }
       ]
     },
@@ -512,12 +513,12 @@
           "score": 0.788
         },
         {
-          "heading_path": "Grid features > Load flow validation",
-          "score": 0.7319
+          "heading_path": "Grid exchange formats > CIM-CGMES > Export > iidm.export.cgmes.export-load-flow-status",
+          "score": 0.6916
         },
         {
-          "heading_path": "User documentation > iTools > iTools loadflow-validation > Active power",
-          "score": 0.6996
+          "heading_path": "User documentation > Configuration > loadflow-validation",
+          "score": 0.6943
         }
       ]
     },
@@ -540,8 +541,8 @@
           "score": 0.7818
         },
         {
-          "heading_path": "Grid model > Network and subnetwork > Busbar section",
-          "score": 0.7756
+          "heading_path": "Grid features > Network modifications > Topology modifications > Create Voltage Level Sections",
+          "score": 0.7543
         }
       ]
     },
@@ -551,21 +552,21 @@
       "expected_sources": [
         "Load flow > Configuration > voltageInitMode"
       ],
-      "rank": null,
+      "rank": 1,
       "top_score": 0.7683,
       "refused": false,
       "retrieved": [
         {
-          "heading_path": "Simulation > Load flow > Implementations",
-          "score": 0.7683
+          "heading_path": "Simulation > Load flow > Configuration > voltageInitMode",
+          "score": 0.7362
+        },
+        {
+          "heading_path": "Simulation > Short-circuit analysis > Parameters > initial-voltage-profile-mode",
+          "score": 0.7413
         },
         {
           "heading_path": "User documentation > iTools > iTools loadflow-validation > Active power",
           "score": 0.7645
-        },
-        {
-          "heading_path": "Simulation > Load flow > Configuration > LoadFlowDefaultParametersLoader",
-          "score": 0.7583
         }
       ]
     },
@@ -609,8 +610,8 @@
           "score": 0.8169
         },
         {
-          "heading_path": "Simulation > Dynamic simulation > Configuration > startTime",
-          "score": 0.8071
+          "heading_path": "Simulation > Dynamic simulation > Configuration > Examples",
+          "score": 0.745
         },
         {
           "heading_path": "Simulation > Dynamic simulation > Configuration > Parameters",
@@ -637,8 +638,8 @@
           "score": 0.73
         },
         {
-          "heading_path": "Simulation > Security analysis > Contingency DSL > Automatic contingency list",
-          "score": 0.7189
+          "heading_path": "Simulation > Security analysis > Contingency DSL > N-1 contingency",
+          "score": 0.7167
         }
       ]
     },
@@ -649,14 +650,10 @@
         "Security analysis > Configuration > Violations increase thresholds",
         "Security analysis > Configuration > flow-proportional-threshold"
       ],
-      "rank": 1,
+      "rank": 3,
       "top_score": 0.7658,
       "refused": false,
       "retrieved": [
-        {
-          "heading_path": "Simulation > Security analysis > Configuration > Violations increase thresholds",
-          "score": 0.7658
-        },
         {
           "heading_path": "Simulation > Security analysis > Configuration > low-voltage-proportional-threshold",
           "score": 0.7266
@@ -664,6 +661,10 @@
         {
           "heading_path": "Simulation > Security analysis > Configuration > low-voltage-absolute-threshold",
           "score": 0.7154
+        },
+        {
+          "heading_path": "Simulation > Security analysis > Configuration > Violations increase thresholds",
+          "score": 0.7658
         }
       ]
     },
@@ -673,7 +674,7 @@
       "expected_sources": [
         "Sensitivity analysis > Introduction"
       ],
-      "rank": 2,
+      "rank": null,
       "top_score": 0.8288,
       "refused": false,
       "retrieved": [
@@ -682,8 +683,8 @@
           "score": 0.8288
         },
         {
-          "heading_path": "Simulation > Sensitivity analysis > Introduction",
-          "score": 0.7723
+          "heading_path": "Simulation > Sensitivity analysis > Configuration > voltageVoltageSensitivityValueThreshold",
+          "score": 0.7112
         },
         {
           "heading_path": "Simulation > Sensitivity analysis > Outputs > Example of interpretation",
@@ -734,8 +735,8 @@
           "score": 0.7211
         },
         {
-          "heading_path": "User documentation > iTools > iTools dynamic-simulation",
-          "score": 0.6299
+          "heading_path": "Grid model > Adders by copy > Loading limits",
+          "score": 0.6017
         }
       ]
     },
@@ -758,8 +759,8 @@
           "score": 0.7721
         },
         {
-          "heading_path": "User documentation > iTools > iTools dynamic-simulation",
-          "score": 0.7502
+          "heading_path": "User documentation > iTools > Available commands",
+          "score": 0.7384
         }
       ]
     },
@@ -782,8 +783,8 @@
           "score": 0.8135
         },
         {
-          "heading_path": "User documentation > iTools > iTools cim-anonymizer > Usage",
-          "score": 0.7863
+          "heading_path": "Grid exchange formats > CIM-CGMES > Import > iidm.import.cgmes.decode-escaped-identifiers",
+          "score": 0.7051
         }
       ]
     },
@@ -824,7 +825,7 @@
       "id": "U02",
       "question": "How do I configure Nginx as a reverse proxy?",
       "top_score": 0.6025,
-      "top_section": "Grid exchange formats > UCTE-DEF > Import > Angle regulation",
+      "top_section": "User documentation > Configuration > componentDefaultConfig",
       "refused": true
     },
     {
@@ -838,7 +839,7 @@
       "id": "U04",
       "question": "How do I make my Excel spreadsheet calculate VAT automatically?",
       "top_score": 0.5917,
-      "top_section": "User documentation > iTools > iTools action-simulator > Examples",
+      "top_section": "Grid exchange formats > PSS®E > Import > _Transformer Data_",
       "refused": true
     },
     {
@@ -852,28 +853,28 @@
       "id": "U06",
       "question": "How do I deploy a Spring Boot application to AWS Lambda?",
       "top_score": 0.6049,
-      "top_section": "Grid exchange formats > CIM-CGMES > Export > CGM (Common Grid Model) quick export",
+      "top_section": "Grid exchange formats > CIM-CGMES > Triple store > In-memory Rdf4j",
       "refused": true
     },
     {
       "id": "U07",
       "question": "What is the history of the European electricity grid synchronization in 1958?",
       "top_score": 0.6027,
-      "top_section": "Grid exchange formats > CIM-CGMES > Import > SynchronousMachine",
+      "top_section": "Grid exchange formats > UCTE-DEF > Export > ucte.export.naming-strategy",
       "refused": true
     },
     {
       "id": "U08",
       "question": "How do I choose a circuit breaker size for my kitchen oven?",
       "top_score": 0.6654,
-      "top_section": "Grid features > Network modifications > Topology modifications > Create Voltage Level Topology",
+      "top_section": "Grid model > Network and subnetwork > Breaker/switch",
       "refused": true
     },
     {
       "id": "U09",
       "question": "What is the IEC 61850 GOOSE messaging protocol?",
       "top_score": 0.6371,
-      "top_section": "Grid exchange formats > IIDM exchange formats > JIIDM",
+      "top_section": "Grid exchange formats > CIM-CGMES > Examples",
       "refused": true
     },
     {
@@ -887,21 +888,21 @@
       "id": "U11",
       "question": "How do I connect PowSyBl to a live SCADA system to receive real-time measurements?",
       "top_score": 0.7359,
-      "top_section": "Simulation",
+      "top_section": "Grid exchange formats > CIM-CGMES > Import > Levels of detail: node/breaker and bus/branch",
       "refused": false
     },
     {
       "id": "U12",
       "question": "How do I train a machine learning model to forecast electricity prices?",
       "top_score": 0.6371,
-      "top_section": "Grid model > Grid model extensions > Generator startup",
+      "top_section": "Grid exchange formats > IIDM exchange formats > JIIDM",
       "refused": true
     },
     {
       "id": "U13",
       "question": "Which country has the largest offshore wind farm?",
       "top_score": 0.5165,
-      "top_section": "Grid model > Network and subnetwork > Substation > Characteristics",
+      "top_section": "Grid exchange formats > CIM-CGMES > Import > SynchronousMachine",
       "refused": true
     },
     {

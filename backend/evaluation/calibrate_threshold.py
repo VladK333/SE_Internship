@@ -23,7 +23,7 @@ def main():
     for label in ("answerable", "unanswerable"):
         for q in data[label]:
             best = retriever.search(q, k=1)[0]
-            rows.append({"question": q, "label": label, "score": round(best["score"], 4),
+            rows.append({"question": q, "label": label, "score": round(best["query_top_similarity"], 4),
                          "top_section": best["heading_path"]})
 
     ans = sorted(r["score"] for r in rows if r["label"] == "answerable")

@@ -2,6 +2,7 @@ pymupdf4llm
 markdown-it-py
 sentence-transformers
 faiss-cpu
+rank-bm25
 fastapi
 uvicorn[standard]
 httpx

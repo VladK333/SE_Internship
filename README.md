@@ -47,6 +47,26 @@ python backend\ingestion\build_index.py
 
 Backend bez VS Code-a: `python -m uvicorn app.main:app --app-dir backend --port 8000`
 
+## Rezultati evaluacije
+
+48 pitanja (33 sa odgovorom, 15 bez), hibridna pretraga (BM25 + vektori) i llama3 8B:
+
+| Metrika | Rezultat |
+| --- | --- |
+| Tačan izvor u top 3 | 30/33 (90,9 %) |
+| Pitanja bez odgovora ispravno odbijena | 15/15 (100 %) |
+| Prosečna ocena odgovora (1–3) | 2,82 |
+
+Ponavljanje: `python backend\evaluation\evaluate.py` (pretraga, par sekundi) i
+`python backend\evaluation\evaluate_answers.py` (odgovori sa LLM-om, oko 45 min).
+
+## Dokumenti
+
+- Izveštaj o napretku i završni rezultati: [docs/progress/DocPilot_napredak.pdf](docs/progress/DocPilot_napredak.pdf)
+- Istraživanje Markdown biblioteka: [docs/research/Markdown_biblioteke.pdf](docs/research/Markdown_biblioteke.pdf)
+- API: [backend/API.md](backend/API.md)
+- Plan demo-a: [docs/demo/Demo_plan.md](docs/demo/Demo_plan.md)
+
 ## Izvor dokumentacije
 
 [PowSyBl](https://github.com/powsybl/powsybl-core) dokumentacija, licencirana pod CC-BY-4.0

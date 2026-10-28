@@ -1,11 +1,11 @@
-# Evaluacija pretrage (2026-10-27)
+# Evaluacija pretrage: hybrid (2026-10-28)
 
 Prag odbijanja 0.7, top 3 sekcije.
 
 | Metrika | Rezultat |
 | --- | --- |
-| Tačan izvor u top 3 | 28/33 (84.8 %) |
-| Tačan izvor na 1. mestu | 24/33 (72.7 %) |
+| Tačan izvor u top 3 | 30/33 (90.9 %) |
+| Tačan izvor na 1. mestu | 25/33 (75.8 %) |
 | Pitanja sa odgovorom pogrešno odbijena | 0/33 |
 | Pitanja bez odgovora ispravno odbijena | 14/15 (93.3 %) |
 
@@ -14,11 +14,11 @@ Prag odbijanja 0.7, top 3 sekcije.
 | ID | Pitanje | Mesto izvora | Skor |
 | --- | --- | --- | --- |
 | A01 | What kind of database does PowSyBl use to store CGMES data while importing it? | nije u top 3 | 0.826 |
-| A02 | Which PowSyBl equipment does a CGMES synchronous machine become after import? | nije u top 3 | 0.793 |
+| A02 | Which PowSyBl equipment does a CGMES synchronous machine become after import? | 2 | 0.793 |
 | A03 | How is a CGMES model at bus/branch level of detail mapped to PowSyBl topology? | 1 | 0.896 |
 | A04 | What naming convention must UCTE-DEF file names follow? | 1 | 0.796 |
-| A05 | Which options are available when importing a UCTE file? | nije u top 3 | 0.774 |
-| A06 | Is the XIIDM output indented by default when exporting a network? | 2 | 0.796 |
+| A05 | Which options are available when importing a UCTE file? | 2 | 0.774 |
+| A06 | Is the XIIDM output indented by default when exporting a network? | 1 | 0.796 |
 | A07 | Do I need a licence to work with PowerFactory files? | 1 | 0.804 |
 | A08 | What must be installed before Matpower cases can be converted? | 1 | 0.828 |
 | A09 | Can the PSS/E importer ignore the base voltage written in the file? | 1 | 0.896 |
@@ -35,12 +35,12 @@ Prag odbijanja 0.7, top 3 sekcije.
 | A20 | Why would I flatten a network that contains subnetworks? | 1 | 0.862 |
 | A21 | Which physical law is checked for every bus during load flow validation? | 1 | 0.788 |
 | A22 | How do I add a coupling device between two busbar sections? | 1 | 0.858 |
-| A23 | What voltage initialization modes does the load flow support? | nije u top 3 | 0.768 |
+| A23 | What voltage initialization modes does the load flow support? | 1 | 0.768 |
 | A24 | How is the active power mismatch distributed when distributed slack is enabled? | 1 | 0.760 |
 | A25 | What is the default stop time of a dynamic simulation? | 1 | 0.817 |
 | A26 | How do I write a contingency that trips several equipments at the same time? | 1 | 0.738 |
-| A27 | How can I report a violation after a contingency only if it got worse than before the contingency? | 1 | 0.766 |
-| A28 | What does a sensitivity value represent? | 2 | 0.829 |
+| A27 | How can I report a violation after a contingency only if it got worse than before the contingency? | 3 | 0.766 |
+| A28 | What does a sensitivity value represent? | nije u top 3 | 0.829 |
 | A29 | What is the difference between sub-transient and transient short-circuit studies? | 1 | 0.834 |
 | A30 | How can I compute a new time series from an existing one? | 1 | 0.770 |
 | A31 | Which iTools command converts a grid file from one format to another? | 1 | 0.848 |

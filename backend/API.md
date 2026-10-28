@@ -21,10 +21,11 @@ Embedding model i indeks se učitavaju jednom, pri startu (oko 10 s).
 | `OLLAMA_MODEL` | `llama3` | Model koji piše odgovor |
 | `LLM_TIMEOUT` | `300` | Najduže čekanje na model, u sekundama |
 | `REFUSAL_THRESHOLD` | `0.70` | Najmanji skor sličnosti da bi pitanje stiglo do modela |
+| `RETRIEVAL_MODE` | `hybrid` | `hybrid` (BM25 + vektori, Reciprocal Rank Fusion) ili `vector` (samo vektori) |
 
 ## `POST /chat`
 
-Postavlja pitanje. Server pronađe 3 najrelevantnije sekcije dokumentacije, a lokalni LLM (Ollama, llama3 8B)
+Postavlja pitanje. Server pronađe 3 najrelevantnije sekcije dokumentacije (hibridna pretraga: BM25 + vektori), a lokalni LLM (Ollama, llama3 8B)
 iz njih napiše odgovor u Markdown-u, sa citatima u obliku `[1]`, `[2]` koji odgovaraju redosledu pronađenih sekcija.
 Na računaru bez grafičke kartice odgovor stiže za 30 s do 4 min.
 

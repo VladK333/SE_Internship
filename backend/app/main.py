@@ -73,7 +73,7 @@ def chat(request: ChatRequest):
                             detail=f"Pitanje je predugo ({len(question)} karaktera, dozvoljeno {MAX_QUESTION_LENGTH}).")
 
     results = state["retriever"].search(question, k=TOP_K)
-    if not results or results[0]["score"] < REFUSAL_THRESHOLD:
+    if not results or results[0]["query_top_similarity"] < REFUSAL_THRESHOLD:
         return ChatResponse(answer=REFUSAL_MESSAGE, sources=[], refused=True)
 
     sources, seen = [], set()

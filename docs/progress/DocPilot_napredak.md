@@ -17,7 +17,7 @@ Ovaj dokument se dopunjuje posle svake nove funkcionalnosti. Najnovije izmene su
 | 1 | Istraživanje Markdown biblioteka za WPF | Završeno |
 | 2 | LLM i guardrails | U toku (LLM i guardrail 2 gotovi) |
 | 2 | WPF klijent (.NET Framework 4.8) | Završeno |
-| 3 | Evaluacija, ispravke, prezentacija | U toku (evaluacija gotova, sledeće ispravke) |
+| 3 | Evaluacija, ispravke, prezentacija | Evaluacija i ispravke završene; demo sledi |
 
 ## Arhitektura i struktura projekta
 
@@ -497,6 +497,59 @@ Ispravljeno je 13 linkova, na primer:
 
 **Provera:** indeks je ponovo napravljen (803 chunka). Evaluacija pretrage daje iste rezultate (84,8 % / 93,3 %, bez regresija), a prag 0,70 i dalje savršeno razdvaja kalibracioni skup.
 
+### Hibridna pretraga (BM25 + vektori)
+
+**Kod:** `backend/app/retriever.py` · **Podešavanje:** `RETRIEVAL_MODE=hybrid` (podrazumevano) ili `vector`
+
+Najveći deo promašaja u prvoj evaluaciji bili su slučajevi u kojima vektorska pretraga ne razlikuje slične sekcije (uvoz / izvoz) ili ne prepoznaje tačne nazive parametara (`voltageInitMode`). Zato je uz vektorsku pretragu dodat **BM25**, koji traži tačne reči, a rezultati se spajaju standardnom metodom **Reciprocal Rank Fusion** (k = 60, po 30 kandidata iz svake pretrage). Ovo je ujedno i bonus „Hybrid search“ iz specifikacije.
+
+- Nazivi se za BM25 čuvaju celi i deljeni na delove: `voltageInitMode` → `voltageinitmode`, `voltage`, `init`, `mode`; `iidm.import.cgmes` → i `iidm`, `import`, `cgmes`.
+- Prag odbijanja (guardrail 2) i dalje koristi najveću kosinusnu sličnost iz vektorske pretrage, na kojoj je kalibrisan, pa se ponašanje odbijanja ne menja.
+- Parametri spajanja su standardni i **nisu podešavani na evaluacionom skupu**.
+
+## 13. Završni rezultati evaluacije
+
+Isti skup od 48 pitanja (33 sa odgovorom, 15 bez), pre i posle ispravki. Detalji po pitanjima: `backend/evaluation/results/` (`*_vector.*` je prva runda, ostalo je završna).
+
+| Metrika iz specifikacije | Prva runda (samo vektori) | **Završno (hibridno)** |
+| --- | --- | --- |
+| Tačan izvor u top 3 | 28/33 (84,8 %) | **30/33 (90,9 %)** |
+| Tačan izvor na 1. mestu | 24/33 (72,7 %) | **25/33 (75,8 %)** |
+| Pitanja bez odgovora ispravno odbijena | 15/15 (100 %) | **15/15 (100 %)** |
+| Pitanja sa odgovorom pogrešno odbijena | 1/33 | **0/33** |
+| Prosečna ocena odgovora (1–3) | 2,70 | **2,82** |
+| Ocena 3 / 2 / 1 | 26 / 4 / 3 | **28 / 4 / 1** |
+| Vreme odgovora sa LLM-om (medijana) | 59 s | 64 s |
+
+*Ocene odgovora su predlog sa obrazloženjem za svako pitanje i čekaju potvrdu autorke.*
+
+**Šta se popravilo:**
+
+| ID | Pre | Posle |
+| --- | --- | --- |
+| A23 `voltageInitMode` | 1 — navedene implementacije load flow-a | **3** — tačna tri načina inicijalizacije |
+| A05 opcije UCTE uvoza | 1 — model odbio | **3** — sve tri opcije sa opisom |
+| A02 CGMES SynchronousMachine | 2 — oslonac na sekciju o izvozu | **3** — pronađena sekcija o uvozu |
+
+**Šta je ostalo:**
+
+- **A13** (kondenzator ili prigušnica): pretraga i dalje nalazi PSS®E sekcije o šantovima umesto opšte sekcije o modelu mreže, pa je odgovor netačan. Rešenje bi bio reranker (bonus iz specifikacije) ili širi kontekst naslova u tekstu za embedding.
+- **A08, A16, A24, A27**: tačni, ali nepotpuni odgovori (model navodi samo deo podataka iz sekcije).
+- **Brzina:** lokalni model na procesoru odgovara za oko jedan minut (najduže 4,5 min). Streaming odgovora (bonus) bi znatno poboljšao osećaj brzine.
+- Dva pitanja (A01, A28) se vode kao promašaj pretrage iako pronađene sekcije takođe sadrže odgovor; oznake očekivanih izvora namerno nisu naknadno menjane.
+
+**Bezbednost:** u obe runde nijedno pitanje van dokumentacije nije dobilo odgovor, uključujući pokušaje zaobilaženja uputstava („Forget the documentation…“, „Ignore previous instructions…“) i tematski blisko pitanje o SCADA sistemu koje je prošlo prag, a odbio ga je model.
+
+## Zaključak
+
+Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, ingestion sa metapodacima, embeddings i FAISS, HTTP API sa dokumentacijom, LLM sa guardrail-ima (1–4 i 6 obavezni, 5 i 7 opcioni), WPF klijent na .NET Framework 4.8 sa bezbednim Markdown prikazom, istraživanje Markdown biblioteka i evaluacija sa tri tražene metrike. Od bonusa je urađena hibridna pretraga.
+
+| „Done means“ iz specifikacije | Status |
+| --- | --- |
+| Dokument istraživanja Markdown biblioteka | ✅ `docs/research/Markdown_biblioteke.pdf` |
+| Rezultati evaluacije | ✅ sekcije 11 i 13, `backend/evaluation/results/` |
+| Demo | plan: `docs/demo/Demo_plan.md` |
+
 ## Dnevnik izmena
 
 | Datum | Izmena |
@@ -520,3 +573,5 @@ Ispravljeno je 13 linkova, na primer:
 | 27.10.2026. | Evaluacija pretrage: 48 pitanja; tačan izvor u top 3 84,8 %, ispravno odbijeno 93,3 %, 0 pogrešno odbijenih |
 | 27.10.2026. | Evaluacija odgovora sa LLM-om: prosečna ocena 2,70/3 (predlog), 15/15 ispravno odbijenih, medijana 59 s |
 | 27.10.2026. | Ispravke: 13 pogrešnih linkova izvora, uklonjeni PDF artefakti (matematička Unicode slova, razmaci uz kod); indeks ponovo napravljen |
+| 28.10.2026. | Hibridna pretraga (BM25 + vektori, RRF): tačan izvor u top 3 90,9 % (bilo 84,8 %) |
+| 28.10.2026. | Završna evaluacija odgovora: prosečna ocena 2,82/3 (bilo 2,70), 15/15 ispravno odbijenih, 0 pogrešno odbijenih; plan demo-a |
