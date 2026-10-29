@@ -12,7 +12,7 @@ does not cover are refused with *"Not covered in the documentation."*
 
 Task specification: [docs/specification](docs/specification/DocPilot%20-%20Specification%20(October%202026).md)
 
-![DocPilot client: an answer with sources and a refused question](docs/progress/img/klijent_chat.png)
+![DocPilot client: start screen with example questions](docs/progress/img/docpilot_client.png)
 
 ## Features
 

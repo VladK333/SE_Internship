@@ -585,7 +585,7 @@ Ispod svakog odgovora i odbijanja su dugmad 👍 / 👎. Ocena se odmah prikazuj
 - Bez sačuvanog izbora aplikacija prati temu Windows-a; izbor se pamti u `%LOCALAPPDATA%\DocPilot\theme.txt`. Naslovna linija prozora se takođe zatamni (DWM), osim ako je u Windows-u uključena boja naglaska na naslovnim linijama.
 - Slike iz dokumentacije (dijagrami sa providnom pozadinom i crnim linijama) dobijaju svetlu podlogu da bi ostale čitljive.
 
-![Tamna tema: odgovor sa obojenim kodom i izvorima](img/klijent_dark.png)
+![Tamna tema: odgovor sa obojenim kodom, tabelom i izvorima](img/klijent_dark.png)
 
 ### Poređenje modela
 
