@@ -119,7 +119,7 @@ namespace DocPilot.Client.Controls
                 // npr. WebView2 Runtime nije instaliran: prikaži bar običan tekst
                 Content = new TextBox
                 {
-                    Text = Markdown + "\n\n[Prikaz nije dostupan: " + ex.Message + "]",
+                    Text = Markdown + "\n\n[Rendering is not available: " + ex.Message + "]",
                     IsReadOnly = true, TextWrapping = TextWrapping.Wrap, BorderThickness = new Thickness(0),
                     Background = Brushes.Transparent,
                 };

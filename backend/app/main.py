@@ -125,10 +125,10 @@ def retrieve(request):
     """Guardrail 4 (provera pitanja) i pretraga; results je None kada pitanje ne prolazi prag (guardrail 2)."""
     question = request.question.strip()
     if not question:
-        raise HTTPException(status_code=400, detail="Pitanje ne sme biti prazno.")
+        raise HTTPException(status_code=400, detail="The question must not be empty.")
     if len(question) > MAX_QUESTION_LENGTH:
         raise HTTPException(status_code=400,
-                            detail=f"Pitanje je predugo ({len(question)} karaktera, dozvoljeno {MAX_QUESTION_LENGTH}).")
+                            detail=f"The question is too long ({len(question)} characters, at most {MAX_QUESTION_LENGTH} allowed).")
 
     results = state["retriever"].search(question, k=TOP_K)
     if not results or results[0]["query_top_similarity"] < REFUSAL_THRESHOLD:
@@ -173,7 +173,7 @@ def feedback(request: FeedbackRequest):
 def health():
     retriever = state.get("retriever")
     if retriever is None:
-        raise HTTPException(status_code=503, detail="Indeks jos nije ucitan.")
+        raise HTTPException(status_code=503, detail="The index is not loaded yet.")
     llm_status = llm.status()
     return HealthResponse(
         status="ok" if llm_status["status"] == "ok" else "degraded",

@@ -59,9 +59,9 @@ def generate_answer(question, sections):
         r = httpx.post(f"{OLLAMA_URL}/api/chat", json=payload, timeout=LLM_TIMEOUT)
         r.raise_for_status()
     except httpx.TimeoutException as e:
-        raise LLMError(f"Model nije odgovorio za {LLM_TIMEOUT:.0f} s.") from e
+        raise LLMError(f"The model did not answer within {LLM_TIMEOUT:.0f} s.") from e
     except httpx.HTTPError as e:
-        raise LLMError(f"Ollama nije dostupna na {OLLAMA_URL} ({e}).") from e
+        raise LLMError(f"Ollama is not reachable at {OLLAMA_URL} ({e}).") from e
     return r.json()["message"]["content"].strip()
 
 
@@ -85,9 +85,9 @@ def stream_answer(question, sections):
                 if part.get("done"):
                     break
     except httpx.TimeoutException as e:
-        raise LLMError(f"Model nije nastavio odgovor za {LLM_TIMEOUT:.0f} s.") from e
+        raise LLMError(f"The model did not continue the answer within {LLM_TIMEOUT:.0f} s.") from e
     except httpx.HTTPError as e:
-        raise LLMError(f"Ollama nije dostupna na {OLLAMA_URL} ({e}).") from e
+        raise LLMError(f"Ollama is not reachable at {OLLAMA_URL} ({e}).") from e
 
 
 def status():

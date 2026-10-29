@@ -100,7 +100,7 @@ namespace DocPilot.Client.Rendering
                 {
                     if (!IsTrustedImage(link.Url))
                         link.ReplaceBy(new HtmlInline(
-                            $"<span class=\"blocked\">[slika nije prikazana: izvor nije pouzdan – {WebUtility.HtmlEncode(link.Url ?? "")}]</span>"), copyChildren: false);
+                            $"<span class=\"blocked\">[image not shown: untrusted source – {WebUtility.HtmlEncode(link.Url ?? "")}]</span>"), copyChildren: false);
                 }
                 else if (!IsHttps(link.Url))
                 {

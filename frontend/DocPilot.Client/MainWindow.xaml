@@ -68,7 +68,7 @@
                                 <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
                                     <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,1,6,0"
                                                Foreground="{DynamicResource MutedText}" VerticalAlignment="Center" />
-                                    <TextBlock Text="Izvori" FontSize="12" FontWeight="SemiBold"
+                                    <TextBlock Text="Sources" FontSize="12" FontWeight="SemiBold"
                                                Foreground="{DynamicResource MutedText}" VerticalAlignment="Center" />
                                 </StackPanel>
                                 <ItemsControl ItemsSource="{Binding SourceLinks}">
@@ -102,9 +102,9 @@
                             <StackPanel Orientation="Horizontal" Margin="-6,6,0,-4"
                                         Visibility="{Binding CanRate, Converter={StaticResource BoolToVisibility}}">
                                 <Button x:Name="RateUp" Style="{StaticResource IconButton}" Content="&#xE8E1;"
-                                        ToolTip="Dobar odgovor" AutomationProperties.Name="Dobar odgovor" Command="{Binding RateUpCommand}" />
+                                        ToolTip="Good answer" AutomationProperties.Name="Good answer" Command="{Binding RateUpCommand}" />
                                 <Button x:Name="RateDown" Style="{StaticResource IconButton}" Content="&#xE8E0;"
-                                        ToolTip="Loš odgovor" AutomationProperties.Name="Loš odgovor" Command="{Binding RateDownCommand}" Margin="2,0,0,0" />
+                                        ToolTip="Bad answer" AutomationProperties.Name="Bad answer" Command="{Binding RateDownCommand}" Margin="2,0,0,0" />
                                 <TextBlock Text="{Binding FeedbackStatus}" Margin="8,0,0,0" VerticalAlignment="Center"
                                            FontSize="12" Foreground="{DynamicResource MutedText}" />
                             </StackPanel>
@@ -184,7 +184,7 @@
                     </Border>
                     <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
                         <TextBlock Text="DocPilot" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource MainText}" />
-                        <TextBlock Text="Asistent za PowSyBl dokumentaciju" FontSize="12" Foreground="{DynamicResource MutedText}" />
+                        <TextBlock Text="Assistant for the PowSyBl documentation" FontSize="12" Foreground="{DynamicResource MutedText}" />
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
@@ -237,11 +237,11 @@
             <Border Style="{StaticResource BrandBadge}" Width="64" Height="64" CornerRadius="18" HorizontalAlignment="Center">
                 <TextBlock Style="{StaticResource BrandGlyph}" FontSize="30" />
             </Border>
-            <TextBlock Text="Zdravo, ja sam DocPilot" FontSize="22" FontWeight="SemiBold" Margin="0,16,0,0"
+            <TextBlock Text="Hi, I'm DocPilot" FontSize="22" FontWeight="SemiBold" Margin="0,16,0,0"
                        HorizontalAlignment="Center" Foreground="{DynamicResource MainText}" />
             <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource MutedText}"
-                       Text="Odgovaram na pitanja o PowSyBl dokumentaciji (CIM/CGMES, model mreže, load flow, sigurnosna analiza), samo iz dokumentacije i uz izvore. Pitanja postavljaj na engleskom." />
-            <TextBlock Text="Probaj na primer:" FontSize="12" FontWeight="SemiBold" Margin="0,22,0,8"
+                       Text="I answer questions about the PowSyBl documentation (CIM/CGMES, grid model, load flow, security analysis), using only the documentation and always with sources." />
+            <TextBlock Text="Try for example:" FontSize="12" FontWeight="SemiBold" Margin="0,22,0,8"
                        HorizontalAlignment="Center" Foreground="{DynamicResource MutedText}" />
             <ItemsControl ItemsSource="{Binding ExampleQuestions}" HorizontalAlignment="Center">
                 <ItemsControl.ItemsPanel>
@@ -264,7 +264,7 @@
                 BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
             <DockPanel MaxWidth="960">
-                <Button DockPanel.Dock="Right" Content="Otkaži" Command="{Binding CancelCommand}" Padding="12,3"
+                <Button DockPanel.Dock="Right" Content="Cancel" Command="{Binding CancelCommand}" Padding="12,3"
                         Style="{StaticResource SecondaryButton}" />
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <StackPanel.Triggers>
@@ -285,7 +285,7 @@
                     <Ellipse x:Name="Dot2" Style="{StaticResource BusyDot}" />
                     <Ellipse x:Name="Dot3" Style="{StaticResource BusyDot}" />
                     <TextBlock Margin="10,0" VerticalAlignment="Center" Foreground="{DynamicResource MutedText}"
-                               Text="{Binding BusyStatus}" ToolTip="Lokalni model na procesoru može da piše i do nekoliko minuta." />
+                               Text="{Binding BusyStatus}" ToolTip="A local model running on the CPU can take up to a few minutes." />
                 </StackPanel>
             </DockPanel>
         </Border>
@@ -318,10 +318,10 @@
                                  MinHeight="40" MaxHeight="140" Padding="6,9" VerticalContentAlignment="Center"
                                  Background="Transparent" BorderThickness="0"
                                  Foreground="{DynamicResource MainText}" CaretBrush="{DynamicResource MainText}"
-                                 AutomationProperties.Name="Pitanje"
+                                 AutomationProperties.Name="Question"
                                  PreviewKeyDown="OnQuestionKeyDown" />
                         <!-- tekst-uputstvo dok je polje prazno -->
-                        <TextBlock Text="Postavi pitanje o PowSyBl dokumentaciji…" Margin="9,0,0,0" VerticalAlignment="Center"
+                        <TextBlock Text="Ask a question about the PowSyBl documentation…" Margin="9,0,0,0" VerticalAlignment="Center"
                                    Foreground="{DynamicResource MutedText}" IsHitTestVisible="False">
                             <TextBlock.Style>
                                 <Style TargetType="TextBlock">
@@ -337,7 +337,7 @@
                         <Button Grid.Column="1" Command="{Binding SendCommand}" Margin="8,0,0,0" Width="40" Height="40"
                                 VerticalAlignment="Bottom" Style="{StaticResource PrimaryButton}"
                                 FontFamily="Segoe MDL2 Assets" FontSize="15" Content="&#xE724;"
-                                ToolTip="Pošalji (Enter)" AutomationProperties.Name="Pošalji" />
+                                ToolTip="Send (Enter)" AutomationProperties.Name="Send" />
                     </Grid>
                 </Border>
 
@@ -355,7 +355,7 @@
                         </TextBlock.Style>
                         <Run Text="{Binding Question.Length, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding Source={x:Static vm:ChatViewModel.MaxQuestionLength}, Mode=OneWay}" />
                     </TextBlock>
-                    <TextBlock Text="Enter šalje · Shift+Enter novi red · odgovori samo iz dokumentacije, uz izvore"
+                    <TextBlock Text="Enter to send · Shift+Enter for a new line · answers come only from the documentation, with sources"
                                FontSize="12" Foreground="{DynamicResource MutedText}" />
                 </DockPanel>
             </StackPanel>

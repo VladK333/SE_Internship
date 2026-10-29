@@ -71,10 +71,10 @@ odgovor i napiše „Not covered in the documentation.“, i to se vraća kao `r
 
 | Status | Kada | Primer `detail` |
 | --- | --- | --- |
-| `400` | Prazno pitanje (ili samo razmaci) | `Pitanje ne sme biti prazno.` |
-| `400` | Pitanje duže od 1000 karaktera | `Pitanje je predugo (1001 karaktera, dozvoljeno 1000).` |
-| `503` | Ollama nije pokrenuta | `Ollama nije dostupna na http://127.0.0.1:11434 (...)` |
-| `503` | Model nije odgovorio na vreme | `Model nije odgovorio za 300 s.` |
+| `400` | Prazno pitanje (ili samo razmaci) | `The question must not be empty.` |
+| `400` | Pitanje duže od 1000 karaktera | `The question is too long (1001 characters, at most 1000 allowed).` |
+| `503` | Ollama nije pokrenuta | `Ollama is not reachable at http://127.0.0.1:11434 (...)` |
+| `503` | Model nije odgovorio na vreme | `The model did not answer within 300 s.` |
 | `422` | Telo zahteva nije ispravan JSON ili nema polje `question` | (FastAPI validaciona greška) |
 
 ## `POST /chat/stream`

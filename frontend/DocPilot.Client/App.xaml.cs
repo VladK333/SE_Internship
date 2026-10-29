@@ -26,7 +26,7 @@ namespace DocPilot.Client
         /// Neočekivana greška u prikazu: poruka umesto tihog gašenja aplikacije.
         void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
-            MessageBox.Show(e.Exception.Message, "DocPilot – neočekivana greška",
+            MessageBox.Show(e.Exception.Message, "DocPilot – unexpected error",
                 MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
         }

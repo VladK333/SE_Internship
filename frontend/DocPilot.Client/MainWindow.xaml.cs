@@ -29,7 +29,7 @@ namespace DocPilot.Client
         void UpdateThemeButton()
         {
             ThemeButton.Content = ThemeManager.IsDark ? "" : "";
-            ThemeButton.ToolTip = ThemeManager.IsDark ? "Svetla tema" : "Tamna tema";
+            ThemeButton.ToolTip = ThemeManager.IsDark ? "Light theme" : "Dark theme";
             AutomationProperties.SetName(ThemeButton, (string)ThemeButton.ToolTip);
         }
 

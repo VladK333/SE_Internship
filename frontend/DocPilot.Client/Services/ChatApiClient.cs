@@ -44,7 +44,7 @@ namespace DocPilot.Client.Services
             using (var content = new StringContent(body, Encoding.UTF8, "application/json"))
             {
                 return await SendAsync<ChatResponse>(HttpMethod.Post, "chat", content, timeout,
-                    " Model je možda preopterećen; pokušaj ponovo ili postavi kraće pitanje.", cancellationToken)
+                    " The model may be overloaded; try again or ask a shorter question.", cancellationToken)
                     .ConfigureAwait(false);
             }
         }
@@ -75,7 +75,7 @@ namespace DocPilot.Client.Services
             catch (JsonException ex)
             {
                 throw new ChatApiException(ChatApiErrorKind.Unexpected,
-                    "Server je vratio odgovor koji klijent ne razume.", inner: ex);
+                    "The server returned a response the client does not understand.", inner: ex);
             }
         }
 
@@ -125,7 +125,7 @@ namespace DocPilot.Client.Services
         public async Task<ChatResponse> AskStreamingAsync(string question, IProgress<ChatStreamUpdate> progress,
             CancellationToken cancellationToken = default)
         {
-            const string hint = " Model je možda preopterećen; pokušaj ponovo ili postavi kraće pitanje.";
+            const string hint = " The model may be overloaded; try again or ask a shorter question.";
             var body = JsonSerializer.Serialize(new ChatRequest { Question = question });
             using (var idle = new CancellationTokenSource(timeout))
             using (var linked = CancellationTokenSource.CreateLinkedTokenSource(idle.Token, cancellationToken))
@@ -181,11 +181,11 @@ namespace DocPilot.Client.Services
                                 if (idle.IsCancellationRequested)
                                     throw TimeoutError(timeout, hint, ex);
                                 throw new ChatApiException(ChatApiErrorKind.ServerUnavailable,
-                                    "Veza sa serverom je prekinuta usred odgovora.", inner: ex);
+                                    "The connection to the server was lost in the middle of the answer.", inner: ex);
                             }
                             if (line == null)
                                 throw new ChatApiException(ChatApiErrorKind.Unexpected,
-                                    "Server je prekinuo odgovor pre kraja.");
+                                    "The server ended the answer before it was complete.");
                             idle.CancelAfter(timeout);   // stigao je novi deo: vreme se meri ispočetka
 
                             if (line.StartsWith("event:", StringComparison.Ordinal))
@@ -233,17 +233,17 @@ namespace DocPilot.Client.Services
             catch (Exception ex) when (ex is JsonException || ex is KeyNotFoundException || ex is InvalidOperationException)
             {
                 throw new ChatApiException(ChatApiErrorKind.Unexpected,
-                    "Server je vratio odgovor koji klijent ne razume.", inner: ex);
+                    "The server returned a response the client does not understand.", inner: ex);
             }
         }
 
         ChatApiException TimeoutError(TimeSpan limit, string hint, Exception inner) =>
-            new ChatApiException(ChatApiErrorKind.Timeout, $"Server nije odgovorio za {limit.TotalSeconds:0} s.{hint}",
+            new ChatApiException(ChatApiErrorKind.Timeout, $"The server did not respond within {limit.TotalSeconds:0} s.{hint}",
                 inner: inner);
 
         ChatApiException UnavailableError(Exception inner) =>
             new ChatApiException(ChatApiErrorKind.ServerUnavailable,
-                $"Server nije dostupan na {http.BaseAddress}. Proveri da li je backend pokrenut.", inner: inner);
+                $"The server is not reachable at {http.BaseAddress}. Check that the backend is running.", inner: inner);
 
         /// FastAPI greške imaju oblik {"detail": "..."}; za 422 je detail lista.
         static ChatApiException ErrorFromResponse(int status, string body)
@@ -264,13 +264,13 @@ namespace DocPilot.Client.Services
                 case 400:
                 case 422:
                     return new ChatApiException(ChatApiErrorKind.InvalidRequest,
-                        detail ?? "Server je odbio pitanje kao neispravno.", status);
+                        detail ?? "The server rejected the question as invalid.", status);
                 case 503:
                     return new ChatApiException(ChatApiErrorKind.ServiceUnavailable,
-                        detail ?? "Jezički model trenutno nije dostupan.", status);
+                        detail ?? "The language model is currently unavailable.", status);
                 default:
                     return new ChatApiException(ChatApiErrorKind.Unexpected,
-                        string.Format(CultureInfo.InvariantCulture, "Greška na serveru (HTTP {0}).", status), status);
+                        string.Format(CultureInfo.InvariantCulture, "Server error (HTTP {0}).", status), status);
             }
         }
 

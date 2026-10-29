@@ -19,7 +19,7 @@ namespace DocPilot.Client.ViewModels
         CancellationTokenSource pending;
         string question = "";
         bool isBusy;
-        string serverStatus = "Provera servera...";
+        string serverStatus = "Checking the server...";
         string busyStatus = "";
         bool isServerOk;
 
@@ -118,8 +118,8 @@ namespace DocPilot.Client.ViewModels
                 var health = await api.GetHealthAsync();
                 IsServerOk = health.IsOk;
                 ServerStatus = health.IsOk
-                    ? $"Server radi · {health.Llm?.Model}"
-                    : $"Server radi, ali jezički model nije dostupan ({health.Llm?.Status}). Pitanja van dokumentacije i dalje rade.";
+                    ? $"Server online · {health.Llm?.Model}"
+                    : $"Server online, but the language model is unavailable ({health.Llm?.Status}). Questions outside the documentation are still refused.";
             }
             catch (ChatApiException e)
             {
@@ -133,7 +133,7 @@ namespace DocPilot.Client.ViewModels
             var text = question.Trim();
             Messages.Add(MessageViewModel.FromQuestion(text));
             Question = "";
-            BusyStatus = "DocPilot pretražuje dokumentaciju i čita pronađene sekcije…";
+            BusyStatus = "DocPilot is searching the documentation and reading the sections it found…";
             IsBusy = true;
             pending = new CancellationTokenSource();
             MessageViewModel streaming = null;
@@ -153,7 +153,7 @@ namespace DocPilot.Client.ViewModels
                             if (!Messages.Contains(streaming))
                             {
                                 Messages.Add(streaming);
-                                BusyStatus = "DocPilot piše odgovor…";
+                                BusyStatus = "DocPilot is writing the answer…";
                             }
                             streaming.AppendText(update.Token);
                         }
@@ -174,7 +174,7 @@ namespace DocPilot.Client.ViewModels
             catch (OperationCanceledException)
             {
                 streaming?.StopStreaming();
-                Messages.Add(MessageViewModel.FromError("Pitanje je otkazano."));
+                Messages.Add(MessageViewModel.FromError("The question was cancelled."));
             }
             catch (ChatApiException e)
             {
@@ -190,7 +190,7 @@ namespace DocPilot.Client.ViewModels
             {
                 // nijedna greška ne sme da sruši aplikaciju (async void komanda)
                 streaming?.StopStreaming();
-                Messages.Add(MessageViewModel.FromError("Neočekivana greška: " + e.Message));
+                Messages.Add(MessageViewModel.FromError("Unexpected error: " + e.Message));
             }
             finally
             {

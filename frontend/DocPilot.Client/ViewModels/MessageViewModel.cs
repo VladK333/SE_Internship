@@ -90,7 +90,7 @@ namespace DocPilot.Client.ViewModels
         public DateTime Time { get; }
 
         /// Naslov iznad poruke, npr. "DocPilot · 14:32".
-        public string Header => (Kind == MessageKind.User ? "Ti" : "DocPilot") + " · " + Time.ToString("HH:mm");
+        public string Header => (Kind == MessageKind.User ? "You" : "DocPilot") + " · " + Time.ToString("HH:mm");
 
         public bool IsUser => Kind == MessageKind.User;
         public bool HasSources => Sources.Count > 0;
@@ -149,12 +149,12 @@ namespace DocPilot.Client.ViewModels
             try
             {
                 await sendRating(this, value);
-                FeedbackStatus = "Hvala na oceni.";
+                FeedbackStatus = "Thanks for the feedback.";
             }
             catch (ChatApiException e)
             {
                 Rating = previous;
-                FeedbackStatus = "Ocena nije sačuvana: " + e.Message;
+                FeedbackStatus = "Feedback was not saved: " + e.Message;
             }
         }
 
