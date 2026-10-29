@@ -26,6 +26,27 @@ namespace DocPilot.Client.ViewModels
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    /// Komanda sa parametrom iz CommandParameter (npr. tekst primera pitanja).
+    public class RelayCommand<T> : ICommand
+    {
+        readonly Action<T> execute;
+        readonly Func<bool> canExecute;
+
+        public RelayCommand(Action<T> execute, Func<bool> canExecute = null)
+        {
+            this.execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            this.canExecute = canExecute;
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter) => canExecute?.Invoke() ?? true;
+
+        public void Execute(object parameter) => execute(parameter is T value ? value : default);
+
+        public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     /// Komanda za dugme koja poziva async metodu. Dok metoda traje, komanda je onemogućena,
     /// pa korisnik ne može dva puta da pošalje isto pitanje.
     public class AsyncRelayCommand : ICommand

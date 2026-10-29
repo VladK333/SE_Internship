@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using System.Windows.Threading;
 using DocPilot.Client.Themes;
 using DocPilot.Client.ViewModels;
@@ -59,11 +58,11 @@ namespace DocPilot.Client
         }
 
         /// Izvori se otvaraju u podrazumevanom browseru, i to samo HTTPS linkovi.
-        void OnSourceLinkClicked(object sender, RequestNavigateEventArgs e)
+        void OnSourceClicked(object sender, RoutedEventArgs e)
         {
-            e.Handled = true;
-            if (e.Uri != null && e.Uri.IsAbsoluteUri && e.Uri.Scheme == Uri.UriSchemeHttps)
-                Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            var url = (sender as FrameworkElement)?.Tag as string;
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps)
+                Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
         }
     }
 }

@@ -647,3 +647,4 @@ Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, 
 | 28.10.2026. | Bonus: feedback dugmad (👍/👎, `POST /feedback`, log na serveru) i dark mode (teme, praćenje Windows teme, tamno bojenje koda) |
 | 28.10.2026. | Bonus: streaming odgovora (`POST /chat/stream`, Server-Sent Events, prikaz bez treptanja) |
 | 28.10.2026. | Bonus: poređenje modela llama3 8B i gemma3 1B (2,82 naspram 2,24; gemma 4× brža, ali jednom nije odbila pitanje van dokumentacije) |
+| 29.10.2026. | Doteran izgled klijenta: logo i avatar asistenta, autor i vreme poruka, izvori kao kartice sa brojem citata, pozdrav sa primerima pitanja, animirani indikator sa tekstom šta se trenutno dešava, zaobljeno polje za unos |

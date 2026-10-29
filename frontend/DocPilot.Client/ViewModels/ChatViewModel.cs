@@ -20,6 +20,7 @@ namespace DocPilot.Client.ViewModels
         string question = "";
         bool isBusy;
         string serverStatus = "Provera servera...";
+        string busyStatus = "";
         bool isServerOk;
 
         /// useStreaming: odgovor se prikazuje dok ga model piše (POST /chat/stream); inače se čeka ceo (POST /chat).
@@ -29,6 +30,32 @@ namespace DocPilot.Client.ViewModels
             this.useStreaming = useStreaming;
             SendCommand = new AsyncRelayCommand(SendAsync, () => CanSend);
             CancelCommand = new RelayCommand(Cancel, () => IsBusy);
+            AskExampleCommand = new RelayCommand<string>(AskExample, () => !IsBusy);
+        }
+
+        /// Primeri na praznom ekranu; sva četiri pretraga pouzdano nalazi (videti evaluaciju).
+        public string[] ExampleQuestions { get; } =
+        {
+            "Which CGMES versions are supported?",
+            "Which attributes describe a line in the grid model?",
+            "What voltage initialization modes does the load flow support?",
+            "How can I anonymize the identifiers in CIM files?",
+        };
+
+        public RelayCommand<string> AskExampleCommand { get; }
+
+        /// Tekst pored indikatora učitavanja: prvo pretraga i čitanje sekcija, pa pisanje odgovora.
+        public string BusyStatus
+        {
+            get => busyStatus;
+            private set => SetProperty(ref busyStatus, value);
+        }
+
+        void AskExample(string example)
+        {
+            Question = example;
+            if (SendCommand.CanExecute(null))
+                SendCommand.Execute(null);
         }
 
         /// Poruke, najnovija na dnu.
@@ -63,6 +90,7 @@ namespace DocPilot.Client.ViewModels
                 {
                     SendCommand.RaiseCanExecuteChanged();
                     CancelCommand.RaiseCanExecuteChanged();
+                    AskExampleCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -105,6 +133,7 @@ namespace DocPilot.Client.ViewModels
             var text = question.Trim();
             Messages.Add(MessageViewModel.FromQuestion(text));
             Question = "";
+            BusyStatus = "DocPilot pretražuje dokumentaciju i čita pronađene sekcije…";
             IsBusy = true;
             pending = new CancellationTokenSource();
             MessageViewModel streaming = null;
@@ -122,7 +151,10 @@ namespace DocPilot.Client.ViewModels
                         {
                             // balončić se pojavljuje tek sa prvim delom teksta; do tada radi indikator učitavanja
                             if (!Messages.Contains(streaming))
+                            {
                                 Messages.Add(streaming);
+                                BusyStatus = "DocPilot piše odgovor…";
+                            }
                             streaming.AppendText(update.Token);
                         }
                     });

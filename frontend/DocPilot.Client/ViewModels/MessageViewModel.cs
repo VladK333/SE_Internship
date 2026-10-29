@@ -89,6 +89,9 @@ namespace DocPilot.Client.ViewModels
 
         public DateTime Time { get; }
 
+        /// Naslov iznad poruke, npr. "DocPilot · 14:32".
+        public string Header => (Kind == MessageKind.User ? "Ti" : "DocPilot") + " · " + Time.ToString("HH:mm");
+
         public bool IsUser => Kind == MessageKind.User;
         public bool HasSources => Sources.Count > 0;
 

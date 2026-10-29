@@ -3,58 +3,115 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:DocPilot.Client.ViewModels"
         xmlns:controls="clr-namespace:DocPilot.Client.Controls"
-        Title="DocPilot" Width="1000" Height="750" MinWidth="600" MinHeight="450"
+        Title="DocPilot" Width="1040" Height="780" MinWidth="640" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         FontFamily="Segoe UI" FontSize="14">
 
     <Window.Resources>
+        <!-- logo: avion ("pilot") na gradijentu; koristi se u zaglavlju, kao avatar i na praznom ekranu -->
+        <Style x:Key="BrandBadge" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource BrandGradient}" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="CornerRadius" Value="9" />
+        </Style>
+        <Style x:Key="BrandGlyph" TargetType="TextBlock">
+            <Setter Property="Text" Value="&#xE709;" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
         <!-- odgovor asistenta: Markdown prikazan kroz WebView2 (Controls/MarkdownView.cs) -->
         <DataTemplate x:Key="MarkdownTemplate" DataType="{x:Type vm:MessageViewModel}">
             <controls:MarkdownView Markdown="{Binding Text}" Sources="{Binding Sources}" />
         </DataTemplate>
 
-        <!-- jedna poruka; izgled zavisi od vrste (pitanje, odgovor, odbijeno, greška) -->
+        <!-- jedna poruka: avatar, naslov (autor · vreme) i balončić; izgled zavisi od vrste poruke -->
         <DataTemplate x:Key="MessageTemplate" DataType="{x:Type vm:MessageViewModel}">
-            <Border x:Name="Bubble" Margin="0,6" Padding="14,10" CornerRadius="8" MaxWidth="760"
-                    HorizontalAlignment="Left" BorderThickness="1"
-                    Background="{DynamicResource AssistantBubble}" BorderBrush="{DynamicResource BorderBrush}">
-                <StackPanel>
-                    <TextBox x:Name="MessageText" Text="{Binding Text, Mode=OneWay}" IsReadOnly="True"
-                             TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0"
-                             Foreground="{DynamicResource MainText}" />
-                    <ContentControl x:Name="MarkdownHost" Content="{Binding}" Visibility="Collapsed" Focusable="False" />
+            <Grid Margin="0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-                    <!-- izvori kao linkovi ispod odgovora -->
-                    <StackPanel Margin="0,10,0,0"
-                                Visibility="{Binding HasSources, Converter={StaticResource BoolToVisibility}}">
-                        <TextBlock Text="Izvori" FontSize="12" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource MutedText}" />
-                        <ItemsControl ItemsSource="{Binding SourceLinks}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type vm:SourceLinkViewModel}">
-                                    <TextBlock Margin="0,2,0,0" FontSize="13" ToolTip="{Binding HeadingPath}">
-                                        <Hyperlink NavigateUri="{Binding Url}" RequestNavigate="OnSourceLinkClicked" Foreground="{DynamicResource LinkText}">
-                                            <Run Text="{Binding Label, Mode=OneWay}" />
-                                        </Hyperlink>
-                                    </TextBlock>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                <Border x:Name="Avatar" Style="{StaticResource BrandBadge}" CornerRadius="16"
+                        VerticalAlignment="Top" Margin="0,22,10,0">
+                    <TextBlock Style="{StaticResource BrandGlyph}" FontSize="14" />
+                </Border>
 
-                    <!-- ocena odgovora palcem gore / dole (bonus: feedback dugmad), čuva se na serveru -->
-                    <StackPanel Orientation="Horizontal" Margin="-6,8,0,-4"
-                                Visibility="{Binding CanRate, Converter={StaticResource BoolToVisibility}}">
-                        <Button x:Name="RateUp" Style="{StaticResource IconButton}" Content="&#xE8E1;"
-                                ToolTip="Dobar odgovor" AutomationProperties.Name="Dobar odgovor" Command="{Binding RateUpCommand}" />
-                        <Button x:Name="RateDown" Style="{StaticResource IconButton}" Content="&#xE8E0;"
-                                ToolTip="Loš odgovor" AutomationProperties.Name="Loš odgovor" Command="{Binding RateDownCommand}" Margin="2,0,0,0" />
-                        <TextBlock Text="{Binding FeedbackStatus}" Margin="8,0,0,0" VerticalAlignment="Center"
-                                   FontSize="12" Foreground="{DynamicResource MutedText}" />
-                    </StackPanel>
+                <StackPanel x:Name="Column" Grid.Column="1" HorizontalAlignment="Left">
+                    <TextBlock x:Name="Header" Text="{Binding Header}" FontSize="12" Margin="2,0,2,4"
+                               Foreground="{DynamicResource MutedText}" />
+
+                    <Border x:Name="Bubble" Padding="16,12" CornerRadius="4,14,14,14" MaxWidth="780"
+                            HorizontalAlignment="Left" BorderThickness="1"
+                            Background="{DynamicResource AssistantBubble}" BorderBrush="{DynamicResource BorderBrush}">
+                        <StackPanel>
+                            <DockPanel>
+                                <!-- ikona za odbijanje (info) i grešku (upozorenje) -->
+                                <TextBlock x:Name="KindIcon" DockPanel.Dock="Left" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="15" Margin="0,2,10,0" VerticalAlignment="Top" Visibility="Collapsed" />
+                                <TextBox x:Name="MessageText" Text="{Binding Text, Mode=OneWay}" IsReadOnly="True"
+                                         TextWrapping="Wrap" BorderThickness="0" Background="Transparent" Padding="0"
+                                         Foreground="{DynamicResource MainText}" />
+                            </DockPanel>
+                            <ContentControl x:Name="MarkdownHost" Content="{Binding}" Visibility="Collapsed" Focusable="False" />
+
+                            <!-- izvori kao kartice sa brojem citata; klik otvara sekciju dokumentacije -->
+                            <StackPanel Margin="0,12,0,0"
+                                        Visibility="{Binding HasSources, Converter={StaticResource BoolToVisibility}}">
+                                <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,10" />
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                                    <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets" FontSize="12" Margin="0,1,6,0"
+                                               Foreground="{DynamicResource MutedText}" VerticalAlignment="Center" />
+                                    <TextBlock Text="Izvori" FontSize="12" FontWeight="SemiBold"
+                                               Foreground="{DynamicResource MutedText}" VerticalAlignment="Center" />
+                                </StackPanel>
+                                <ItemsControl ItemsSource="{Binding SourceLinks}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:SourceLinkViewModel}">
+                                            <Button Style="{StaticResource ChipButton}" Tag="{Binding Url}"
+                                                    ToolTip="{Binding HeadingPath}" AutomationProperties.Name="{Binding Label}"
+                                                    Click="OnSourceClicked" Padding="4,4,12,4">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Border Background="{DynamicResource BrandGradient}" CornerRadius="9"
+                                                            MinWidth="18" Height="18" Padding="5,0">
+                                                        <TextBlock Text="{Binding Number}" FontSize="11" FontWeight="SemiBold"
+                                                                   Foreground="White" HorizontalAlignment="Center"
+                                                                   VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <TextBlock Text="{Binding Title}" Margin="7,0,0,0" MaxWidth="280"
+                                                               TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                                                </StackPanel>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- ocena odgovora palcem gore / dole (bonus: feedback dugmad), čuva se na serveru -->
+                            <StackPanel Orientation="Horizontal" Margin="-6,6,0,-4"
+                                        Visibility="{Binding CanRate, Converter={StaticResource BoolToVisibility}}">
+                                <Button x:Name="RateUp" Style="{StaticResource IconButton}" Content="&#xE8E1;"
+                                        ToolTip="Dobar odgovor" AutomationProperties.Name="Dobar odgovor" Command="{Binding RateUpCommand}" />
+                                <Button x:Name="RateDown" Style="{StaticResource IconButton}" Content="&#xE8E0;"
+                                        ToolTip="Loš odgovor" AutomationProperties.Name="Loš odgovor" Command="{Binding RateDownCommand}" Margin="2,0,0,0" />
+                                <TextBlock Text="{Binding FeedbackStatus}" Margin="8,0,0,0" VerticalAlignment="Center"
+                                           FontSize="12" Foreground="{DynamicResource MutedText}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-            </Border>
+            </Grid>
 
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding IsRatedUp}" Value="True">
@@ -71,23 +128,42 @@
                     <Setter TargetName="MarkdownHost" Property="Visibility" Value="Visible" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.User}">
+                    <Setter TargetName="Avatar" Property="Visibility" Value="Collapsed" />
+                    <Setter TargetName="Column" Property="HorizontalAlignment" Value="Right" />
+                    <Setter TargetName="Header" Property="HorizontalAlignment" Value="Right" />
                     <Setter TargetName="Bubble" Property="HorizontalAlignment" Value="Right" />
                     <Setter TargetName="Bubble" Property="MaxWidth" Value="620" />
+                    <Setter TargetName="Bubble" Property="CornerRadius" Value="14,4,14,14" />
                     <Setter TargetName="Bubble" Property="Background" Value="{DynamicResource UserBubble}" />
                     <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource UserBubble}" />
                     <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource UserBubbleText}" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Refused}">
+                    <Setter TargetName="KindIcon" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="KindIcon" Property="Text" Value="&#xE946;" />
+                    <Setter TargetName="KindIcon" Property="Foreground" Value="{DynamicResource MutedText}" />
                     <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource MutedText}" />
                     <Setter TargetName="MessageText" Property="FontStyle" Value="Italic" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding Kind}" Value="{x:Static vm:MessageKind.Error}">
+                    <Setter TargetName="KindIcon" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="KindIcon" Property="Text" Value="&#xE7BA;" />
+                    <Setter TargetName="KindIcon" Property="Foreground" Value="{DynamicResource ErrorText}" />
                     <Setter TargetName="Bubble" Property="Background" Value="{DynamicResource ErrorBackground}" />
                     <Setter TargetName="Bubble" Property="BorderBrush" Value="{DynamicResource ErrorBackground}" />
                     <Setter TargetName="MessageText" Property="Foreground" Value="{DynamicResource ErrorText}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
+
+        <!-- tri tačke koje "dišu" dok server radi -->
+        <Style x:Key="BusyDot" TargetType="Ellipse">
+            <Setter Property="Width" Value="7" />
+            <Setter Property="Height" Value="7" />
+            <Setter Property="Margin" Value="0,0,4,0" />
+            <Setter Property="Fill" Value="{DynamicResource AccentBrush}" />
+            <Setter Property="Opacity" Value="0.25" />
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -98,47 +174,56 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- zaglavlje sa statusom servera -->
-        <Border Grid.Row="0" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
-                Padding="20,12">
+        <!-- zaglavlje: logo, status servera, promena teme -->
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,0,0,1" Padding="20,10">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Center">
-                    <TextBlock Text="DocPilot" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource AccentBrush}" />
-                    <TextBlock Text="PowSyBl dokumentacija" Margin="12,0,0,0" VerticalAlignment="Bottom"
-                               Foreground="{DynamicResource MutedText}" />
+                    <Border Style="{StaticResource BrandBadge}" Width="36" Height="36" CornerRadius="10">
+                        <TextBlock Style="{StaticResource BrandGlyph}" FontSize="17" />
+                    </Border>
+                    <StackPanel Margin="12,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Text="DocPilot" FontSize="18" FontWeight="SemiBold" Foreground="{DynamicResource MainText}" />
+                        <TextBlock Text="Asistent za PowSyBl dokumentaciju" FontSize="12" Foreground="{DynamicResource MutedText}" />
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Ellipse Width="9" Height="9" Margin="0,0,8,0">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Fill" Value="#D92D20" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsServerOk}" Value="True">
-                                        <Setter Property="Fill" Value="#12B76A" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-                    <TextBlock Text="{Binding ServerStatus}" MaxWidth="520" TextTrimming="CharacterEllipsis"
-                               ToolTip="{Binding ServerStatus}" Foreground="{DynamicResource MutedText}" FontSize="13"
-                               VerticalAlignment="Center" />
+                    <!-- status servera kao "pilula" -->
+                    <Border Background="{DynamicResource ChipBackground}" CornerRadius="13" Padding="10,4,12,4"
+                            VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse Width="8" Height="8" Margin="0,0,8,0" VerticalAlignment="Center">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Fill" Value="#D92D20" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsServerOk}" Value="True">
+                                                <Setter Property="Fill" Value="#12B76A" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <TextBlock Text="{Binding ServerStatus}" MaxWidth="480" TextTrimming="CharacterEllipsis"
+                                       ToolTip="{Binding ServerStatus}" Foreground="{DynamicResource MutedText}" FontSize="12"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Border>
                     <!-- svetla / tamna tema (bonus: dark mode); ikonu i opis postavlja MainWindow.xaml.cs -->
-                    <Button x:Name="ThemeButton" Style="{StaticResource IconButton}" Margin="14,0,0,0" FontSize="15"
-                            Click="OnThemeButtonClick" />
+                    <Button x:Name="ThemeButton" Style="{StaticResource IconButton}" Margin="10,0,0,0" FontSize="15"
+                            Padding="8,6" Click="OnThemeButtonClick" />
                 </StackPanel>
             </DockPanel>
         </Border>
 
-        <!-- lista poruka, najnovija na dnu -->
-        <ScrollViewer x:Name="MessagesScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,10">
-            <ItemsControl x:Name="MessagesList" ItemsSource="{Binding Messages}"
+        <!-- lista poruka, najnovija na dnu; na širokom prozoru kolona ostaje čitljive širine (centrirana) -->
+        <ScrollViewer x:Name="MessagesScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="20,12">
+            <ItemsControl x:Name="MessagesList" ItemsSource="{Binding Messages}" MaxWidth="960"
                           ItemTemplate="{StaticResource MessageTemplate}" />
         </ScrollViewer>
 
-        <!-- prazan chat: kratko uputstvo -->
-        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="520"
-                    IsHitTestVisible="False">
+        <!-- prazan chat: pozdrav i primeri pitanja (klik postavlja pitanje) -->
+        <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="600" Margin="20">
             <StackPanel.Style>
                 <Style TargetType="StackPanel">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -149,47 +234,114 @@
                     </Style.Triggers>
                 </Style>
             </StackPanel.Style>
-            <TextBlock Text="Postavi pitanje o PowSyBl dokumentaciji" FontSize="18" FontWeight="SemiBold"
-                       HorizontalAlignment="Center" Foreground="{DynamicResource AccentBrush}" />
+            <Border Style="{StaticResource BrandBadge}" Width="64" Height="64" CornerRadius="18" HorizontalAlignment="Center">
+                <TextBlock Style="{StaticResource BrandGlyph}" FontSize="30" />
+            </Border>
+            <TextBlock Text="Zdravo, ja sam DocPilot" FontSize="22" FontWeight="SemiBold" Margin="0,16,0,0"
+                       HorizontalAlignment="Center" Foreground="{DynamicResource MainText}" />
             <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center" Foreground="{DynamicResource MutedText}"
-                       Text="Na primer: „Which CGMES versions are supported?“ ili „How do I run a security analysis with iTools?“. Pitanja treba postavljati na engleskom, jer je dokumentacija na engleskom." />
+                       Text="Odgovaram na pitanja o PowSyBl dokumentaciji (CIM/CGMES, model mreže, load flow, sigurnosna analiza), samo iz dokumentacije i uz izvore. Pitanja postavljaj na engleskom." />
+            <TextBlock Text="Probaj na primer:" FontSize="12" FontWeight="SemiBold" Margin="0,22,0,8"
+                       HorizontalAlignment="Center" Foreground="{DynamicResource MutedText}" />
+            <ItemsControl ItemsSource="{Binding ExampleQuestions}" HorizontalAlignment="Center">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Style="{StaticResource ChipButton}" Content="{Binding}" Padding="12,7" Margin="4"
+                                Command="{Binding DataContext.AskExampleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </StackPanel>
 
-        <!-- indikator učitavanja -->
+        <!-- indikator učitavanja: tačke, šta se trenutno dešava, Otkaži -->
         <Border Grid.Row="2" Padding="20,8" Background="{DynamicResource BusyBackground}"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
                 Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
-            <DockPanel>
-                <Button DockPanel.Dock="Right" Content="Otkaži" Command="{Binding CancelCommand}" Padding="12,3" Style="{StaticResource SecondaryButton}" />
-                <ProgressBar IsIndeterminate="True" Width="120" Height="6" VerticalAlignment="Center" />
-                <TextBlock Margin="12,0" VerticalAlignment="Center" Foreground="{DynamicResource MutedText}"
-                           Text="DocPilot traži odgovor u dokumentaciji… Lokalni model može da piše i do nekoliko minuta." />
+            <DockPanel MaxWidth="960">
+                <Button DockPanel.Dock="Right" Content="Otkaži" Command="{Binding CancelCommand}" Padding="12,3"
+                        Style="{StaticResource SecondaryButton}" />
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation Storyboard.TargetName="Dot1" Storyboard.TargetProperty="Opacity"
+                                                     From="0.25" To="1" Duration="0:0:0.4" AutoReverse="True" BeginTime="0:0:0" />
+                                    <DoubleAnimation Storyboard.TargetName="Dot2" Storyboard.TargetProperty="Opacity"
+                                                     From="0.25" To="1" Duration="0:0:0.4" AutoReverse="True" BeginTime="0:0:0.2" />
+                                    <DoubleAnimation Storyboard.TargetName="Dot3" Storyboard.TargetProperty="Opacity"
+                                                     From="0.25" To="1" Duration="0:0:0.4" AutoReverse="True" BeginTime="0:0:0.4" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </StackPanel.Triggers>
+                    <Ellipse x:Name="Dot1" Style="{StaticResource BusyDot}" />
+                    <Ellipse x:Name="Dot2" Style="{StaticResource BusyDot}" />
+                    <Ellipse x:Name="Dot3" Style="{StaticResource BusyDot}" />
+                    <TextBlock Margin="10,0" VerticalAlignment="Center" Foreground="{DynamicResource MutedText}"
+                               Text="{Binding BusyStatus}" ToolTip="Lokalni model na procesoru može da piše i do nekoliko minuta." />
+                </StackPanel>
             </DockPanel>
         </Border>
 
-        <!-- unos pitanja -->
-        <Border Grid.Row="3" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0"
-                Padding="20,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+        <!-- unos pitanja: zaobljeno polje sa dugmetom za slanje -->
+        <Border Grid.Row="3" Background="{DynamicResource SurfaceBackground}" BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="0,1,0,0" Padding="20,14,20,10">
+            <StackPanel MaxWidth="960">
+                <Border CornerRadius="14" BorderThickness="1" Padding="6,4,6,4">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
+                            <Style.Triggers>
+                                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                <TextBox x:Name="QuestionBox" Grid.Column="0"
-                         Text="{Binding Question, UpdateSourceTrigger=PropertyChanged}"
-                         AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
-                         MinHeight="44" MaxHeight="140" Padding="8,10" VerticalContentAlignment="Center"
-                         Background="{DynamicResource SurfaceBackground}" Foreground="{DynamicResource MainText}"
-                         BorderBrush="{DynamicResource BorderBrush}" CaretBrush="{DynamicResource MainText}"
-                         PreviewKeyDown="OnQuestionKeyDown" />
-                <Button Grid.Column="1" Content="Pošalji" Command="{Binding SendCommand}" Margin="10,0,0,0"
-                        Padding="22,0" MinHeight="44" Style="{StaticResource PrimaryButton}" />
+                        <TextBox x:Name="QuestionBox"
+                                 Text="{Binding Question, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"
+                                 MinHeight="40" MaxHeight="140" Padding="6,9" VerticalContentAlignment="Center"
+                                 Background="Transparent" BorderThickness="0"
+                                 Foreground="{DynamicResource MainText}" CaretBrush="{DynamicResource MainText}"
+                                 AutomationProperties.Name="Pitanje"
+                                 PreviewKeyDown="OnQuestionKeyDown" />
+                        <!-- tekst-uputstvo dok je polje prazno -->
+                        <TextBlock Text="Postavi pitanje o PowSyBl dokumentaciji…" Margin="9,0,0,0" VerticalAlignment="Center"
+                                   Foreground="{DynamicResource MutedText}" IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Question}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Button Grid.Column="1" Command="{Binding SendCommand}" Margin="8,0,0,0" Width="40" Height="40"
+                                VerticalAlignment="Bottom" Style="{StaticResource PrimaryButton}"
+                                FontFamily="Segoe MDL2 Assets" FontSize="15" Content="&#xE724;"
+                                ToolTip="Pošalji (Enter)" AutomationProperties.Name="Pošalji" />
+                    </Grid>
+                </Border>
 
-                <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,6,0,0">
+                <DockPanel Margin="4,6,4,0">
                     <TextBlock DockPanel.Dock="Right" FontSize="12">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -203,9 +355,10 @@
                         </TextBlock.Style>
                         <Run Text="{Binding Question.Length, Mode=OneWay}" /><Run Text=" / " /><Run Text="{Binding Source={x:Static vm:ChatViewModel.MaxQuestionLength}, Mode=OneWay}" />
                     </TextBlock>
-                    <TextBlock Text="Enter šalje · Shift+Enter novi red" FontSize="12" Foreground="{DynamicResource MutedText}" />
+                    <TextBlock Text="Enter šalje · Shift+Enter novi red · odgovori samo iz dokumentacije, uz izvore"
+                               FontSize="12" Foreground="{DynamicResource MutedText}" />
                 </DockPanel>
-            </Grid>
+            </StackPanel>
         </Border>
     </Grid>
 </Window>

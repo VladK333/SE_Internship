@@ -20,4 +20,10 @@
     <SolidColorBrush x:Key="PrimaryButtonHover" Color="#2C5282" />
     <SolidColorBrush x:Key="PrimaryButtonDisabled" Color="#C9D1DC" />
     <SolidColorBrush x:Key="PrimaryButtonDisabledText" Color="#F5F6F8" />
+    <SolidColorBrush x:Key="ChipBackground" Color="#EEF2F7" />
+    <!-- logo i avatar asistenta -->
+    <LinearGradientBrush x:Key="BrandGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#3B82F6" Offset="0" />
+        <GradientStop Color="#1F3A5F" Offset="1" />
+    </LinearGradientBrush>
 </ResourceDictionary>

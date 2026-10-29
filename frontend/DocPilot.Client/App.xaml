@@ -44,7 +44,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Button">
-                            <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="6"
+                            <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="8"
                                     Padding="{TemplateBinding Padding}">
                                 <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                             </Border>
@@ -56,6 +56,37 @@
                                     <Setter TargetName="Root" Property="Background" Value="{DynamicResource PrimaryButtonDisabled}" />
                                     <Setter Property="Foreground" Value="{DynamicResource PrimaryButtonDisabledText}" />
                                     <Setter Property="Cursor" Value="Arrow" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- zaobljena "kartica" koja se klikne: izvor ispod odgovora, primer pitanja na praznom ekranu -->
+            <Style x:Key="ChipButton" TargetType="Button">
+                <Setter Property="Foreground" Value="{DynamicResource MainText}" />
+                <Setter Property="Background" Value="{DynamicResource ChipBackground}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+                <Setter Property="Padding" Value="10,5" />
+                <Setter Property="Margin" Value="0,0,6,6" />
+                <Setter Property="FontSize" Value="13" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Root" Background="{TemplateBinding Background}" CornerRadius="14"
+                                    BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1"
+                                    Padding="{TemplateBinding Padding}">
+                                <ContentPresenter VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    <Setter TargetName="Root" Property="Background" Value="{DynamicResource SelectedBackground}" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
