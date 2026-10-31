@@ -61,7 +61,7 @@ SE_praksa/
     ├── specification/    task specification
     ├── research/         Markdown library research (comparison, screenshots)
     ├── progress/         progress report for the mentors (.md source + PDF)
-    └── demo/             demo plan
+    └── presentation/     project presentation (.pptx, Serbian)
 ```
 
 ## Requirements
@@ -183,7 +183,7 @@ Per-question results: [backend/evaluation/results](backend/evaluation/results).
 - Progress report and final results (Serbian): [docs/progress/DocPilot_napredak.pdf](docs/progress/DocPilot_napredak.pdf)
 - Markdown library research — MdXaml, Markdig.Wpf, Neo.Markdig.Xaml, Markdig + WebView2 (Serbian): [docs/research/Markdown_biblioteke.pdf](docs/research/Markdown_biblioteke.pdf)
 - API: [backend/API.md](backend/API.md)
-- Demo plan (Serbian): [docs/demo/Demo_plan.md](docs/demo/Demo_plan.md)
+- Project presentation (Serbian): [docs/presentation/DocPilot_prezentacija.pptx](docs/presentation/DocPilot_prezentacija.pptx)
 
 ## Known limitations
 

@@ -617,7 +617,7 @@ Sve obavezne stavke iz specifikacije su urađene: izbor i obrada dokumentacije, 
 | --- | --- |
 | Dokument istraživanja Markdown biblioteka | ✅ `docs/research/Markdown_biblioteke.pdf` |
 | Rezultati evaluacije | ✅ sekcije 11 i 13, `backend/evaluation/results/` |
-| Demo | plan: `docs/demo/Demo_plan.md` |
+| Demo | sledi; prezentacija: `docs/presentation/DocPilot_prezentacija.pptx` |
 
 ## Dnevnik izmena
 
