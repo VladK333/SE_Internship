@@ -10,7 +10,7 @@
 
             <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
-            <!-- malo dugme sa ikonom (Segoe MDL2 Assets), npr. palac gore / dole -->
+            <!-- malo dugme sa ikonom (Segoe MDL2 Assets) -->
             <Style x:Key="IconButton" TargetType="Button">
                 <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
                 <Setter Property="FontSize" Value="14" />

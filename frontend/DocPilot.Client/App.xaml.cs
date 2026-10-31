@@ -23,7 +23,7 @@ namespace DocPilot.Client
             await viewModel.CheckServerAsync();
         }
 
-        /// Neočekivana greška u prikazu: poruka umesto tihog gašenja aplikacije.
+        /// Neocekivana greska u prikazu: poruka umesto tihog gasenja aplikacije
         void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
         {
             MessageBox.Show(e.Exception.Message, "DocPilot – unexpected error",

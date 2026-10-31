@@ -10,7 +10,7 @@ using DocPilot.Client.ViewModels;
 
 namespace DocPilot.Client
 {
-    /// Samo ponašanje prikaza (tastatura, skrol, linkovi); logika je u ChatViewModel.
+    // Samo ponasanje prikaza (tastatura, skrol, linkovi); logika je u ChatViewModel.
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -25,7 +25,7 @@ namespace DocPilot.Client
 
         void OnThemeButtonClick(object sender, RoutedEventArgs e) => ThemeManager.Toggle();
 
-        /// Mesec u svetloj temi (prelazak na tamnu), sunce u tamnoj.
+        // Mesec u svetloj temi (prelazak na tamnu), sunce u tamnoj.
         void UpdateThemeButton()
         {
             ThemeButton.Content = ThemeManager.IsDark ? "" : "";
@@ -43,11 +43,11 @@ namespace DocPilot.Client
                 newVm.Messages.CollectionChanged += OnMessagesChanged;
         }
 
-        /// Nova poruka: skrol na dno (posle iscrtavanja, da bi visina bila poznata).
+        // Nova poruka: skrol na dno (posle iscrtavanja, da bi visina bila poznata).
         void OnMessagesChanged(object sender, NotifyCollectionChangedEventArgs e) =>
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(MessagesScroll.ScrollToEnd));
 
-        /// Enter šalje pitanje, Shift+Enter dodaje novi red.
+        // Enter salje pitanje, Shift+Enter dodaje novi red.
         void OnQuestionKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key != Key.Enter || Keyboard.Modifiers.HasFlag(ModifierKeys.Shift))
@@ -57,7 +57,7 @@ namespace DocPilot.Client
                 ViewModel.SendCommand.Execute(null);
         }
 
-        /// Izvori se otvaraju u podrazumevanom browseru, i to samo HTTPS linkovi.
+        // Izvori se otvaraju u podrazumevanom browseru, i to samo HTTPS linkovi.
         void OnSourceClicked(object sender, RoutedEventArgs e)
         {
             var url = (sender as FrameworkElement)?.Tag as string;

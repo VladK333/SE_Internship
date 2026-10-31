@@ -4,7 +4,7 @@ using System.Windows.Input;
 
 namespace DocPilot.Client.ViewModels
 {
-    /// Komanda za dugme koja poziva običnu metodu.
+    // Komanda za dugme koja poziva obicnu metodu
     public class RelayCommand : ICommand
     {
         readonly Action execute;
@@ -22,11 +22,11 @@ namespace DocPilot.Client.ViewModels
 
         public void Execute(object parameter) => execute();
 
-        /// Poziva se kada se promeni nešto od čega zavisi CanExecute (npr. prazno polje).
+        // Poziva se kada se promeni nešto od cega zavisi CanExecute (npr. prazno polje)
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    /// Komanda sa parametrom iz CommandParameter (npr. tekst primera pitanja).
+    // Komanda sa parametrom iz CommandParameter (npr. tekst primera pitanja)
     public class RelayCommand<T> : ICommand
     {
         readonly Action<T> execute;

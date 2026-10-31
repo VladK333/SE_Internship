@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace DocPilot.Client.ViewModels
 {
-    /// Osnova za ViewModel-e: obaveštava prozor (binding) kada se svojstvo promeni.
+    // Osnova za ViewModele: obavestava prozor (binding) kada se svojstvo promeni
     public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -12,7 +12,7 @@ namespace DocPilot.Client.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        /// Postavlja vrednost polja i javlja promenu; vraća false ako je vrednost ista.
+        // Postavlja vrednost polja i javlja promenu; vraća false ako je vrednost ista
         protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
