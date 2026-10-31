@@ -9,6 +9,8 @@
     <AssemblyName>DocPilot</AssemblyName>
     <!-- WebView2Loader.dll je nativna x64 biblioteka -->
     <PlatformTarget>x64</PlatformTarget>
+    <!-- ikonica .exe fajla i taskbar-a (avion na plavom prelivu, kao logo u aplikaciji) -->
+    <ApplicationIcon>docpilot.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +23,8 @@
   <ItemGroup>
     <!-- CSS, JS i highlight.js za prikaz odgovora; WebView2 ih vidi kao https://docpilot.assets/ -->
     <None Include="Assets\**\*" CopyToOutputDirectory="PreserveNewest" />
+    <!-- ikonica prozora (Window.Icon) -->
+    <Resource Include="docpilot.ico" />
   </ItemGroup>
 
   <ItemGroup>

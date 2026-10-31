@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:DocPilot.Client.ViewModels"
         xmlns:controls="clr-namespace:DocPilot.Client.Controls"
-        Title="DocPilot" Width="1040" Height="780" MinWidth="640" MinHeight="480"
+        Title="DocPilot" Icon="docpilot.ico" Width="1040" Height="780" MinWidth="640" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}"
         FontFamily="Segoe UI" FontSize="14">
