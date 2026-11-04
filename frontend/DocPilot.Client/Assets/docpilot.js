@@ -1,4 +1,3 @@
-// Ponašanje stranice odgovora u WebView2 (bez inline skripti, zbog Content-Security-Policy).
 (function () {
   "use strict";
 

@@ -15,13 +15,7 @@ using Markdig.Syntax.Inlines;
 namespace DocPilot.Client.Rendering
 {
     /// Pretvara Markdown odgovor u kompletnu, bezbednu HTML stranicu za WebView2 (guardrail 6).
-    ///
-    /// Zaštita ima tri sloja:
-    ///  1. Markdig DisableHtml(): sirovi HTML iz odgovora se prikazuje kao tekst, ne izvršava se;
-    ///  2. provera linkova i slika u stablu dokumenta: slike samo sa pouzdanih HTTPS izvora,
-    ///     linkovi samo HTTPS (javascript:, file:, data: ... postaju običan tekst);
-    ///  3. Content-Security-Policy stranice: skripte i stilovi samo iz paketa aplikacije,
-    ///     slike samo sa pouzdanih izvora.
+
     public static class MarkdownRenderer
     {
         /// Virtuelni host pod kojim WebView2 vidi folder Assets (SetVirtualHostNameToFolderMapping).

@@ -10,7 +10,7 @@ Svaki rezultat ima:
                         kalibrisan prag odbijanja (guardrail 2), pa ne zavisi od nacina spajanja
 
 Podesavanje: RETRIEVAL_MODE = hybrid (podrazumevano) ili vector.
-Test iz komandne linije (iz SE_praksa):
+Test iz komandne linije:
   python backend/app/retriever.py "What voltage initialization modes does the load flow support?"
 """
 import json

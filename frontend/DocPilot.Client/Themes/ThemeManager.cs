@@ -8,12 +8,8 @@ using Microsoft.Win32;
 
 namespace DocPilot.Client.Themes
 {
-    /// Svetla i tamna tema (bonus: dark mode).
-    ///
-    /// Boje su u Themes/Light.xaml i Themes/Dark.xaml pod istim ključevima; promena teme zamenjuje
-    /// rečnik u App.xaml, a sve što koristi DynamicResource se odmah preboji. Odgovori u WebView2
-    /// dobijaju klasu "dark" (MarkdownView sluša ThemeChanged). Izbor se pamti u
-    /// %LOCALAPPDATA%\DocPilot\theme.txt; bez sačuvanog izbora prati se tema Windows aplikacija.
+    /// Svetla i tamna tema 
+    
     public static class ThemeManager
     {
         static readonly string PreferenceFile = Path.Combine(

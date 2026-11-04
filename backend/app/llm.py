@@ -1,7 +1,7 @@
 """Poziv lokalnog LLM-a preko Ollama HTTP API-ja.
 
 Podesavanja (promenljive okruzenja):
-  OLLAMA_URL      podrazumevano http://127.0.0.1:11434 (ne localhost: na Windows-u prvo proba IPv6 i gubi ~2 s)
+  OLLAMA_URL      podrazumevano http://127.0.0.1:11434
   OLLAMA_MODEL    podrazumevano llama3
   LLM_TIMEOUT     sekunde, podrazumevano 300 (llama3 8B na CPU odgovara za 1-4 min)
 """

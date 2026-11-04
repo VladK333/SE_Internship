@@ -16,10 +16,7 @@ using Microsoft.Web.WebView2.Wpf;
 namespace DocPilot.Client.Controls
 {
     /// Prikazuje Markdown odgovor kao HTML stranicu u WebView2.
-    ///
-    /// Koristi WebView2CompositionControl (iscrtava se kroz WPF), pa radi unutar liste poruka
-    /// i ScrollViewer-a bez "airspace" problema običnog WebView2 prozora. Sve instance dele jedno
-    /// WebView2 okruženje, odnosno jedan Edge proces.
+
     public class MarkdownView : ContentControl
     {
         public static readonly DependencyProperty MarkdownProperty = DependencyProperty.Register(

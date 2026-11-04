@@ -1,6 +1,6 @@
-"""Spaja odgovore (results/answers.jsonl) i ocene (results/answer_scores.json) u zbirni pregled.
+"""Spaja odgovore (results/answers.jsonl) i ocene (results/answer_scores.json) u zajednickii pregled
 
-Pokretanje (iz SE_praksa):  python backend/evaluation/summarize_answers.py [model]
+Pokretanje:  python backend/evaluation/summarize_answers.py [model]
 Rezultat:                   backend/evaluation/results/answers.md
 Sa modelom (npr. gemma3:1b) cita answers_<model>.jsonl i answer_scores_<model>.json i pise answers_<model>.md.
 """

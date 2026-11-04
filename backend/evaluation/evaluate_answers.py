@@ -1,12 +1,11 @@
-"""Evaluacija odgovora (3. nedelja, deo 2): svako pitanje prolazi kroz ceo /chat (pretraga, prag, LLM).
+"""Evaluacija odgovora: svako pitanje prolazi kroz ceo /chat (pretraga, prag, LLM).
 
 Odgovori se cuvaju posle svakog pitanja u results/answers.jsonl, pa se prekinuto pokretanje
 nastavlja tamo gde je stalo. Ocene 1-3 se upisuju posebno, u results/answer_scores.json.
 
-Pokretanje (iz SE_praksa, Ollama mora da radi):  python backend/evaluation/evaluate_answers.py [model]
-Bez argumenta koristi podrazumevani model (llama3) i pise results/answers.jsonl; sa drugim modelom
-(npr. gemma3:1b, bonus poredjenje modela) pise results/answers_<model>.jsonl.
-Na racunaru bez graficke kartice traje oko 1 sat (llama3 8B, 1-4 min po pitanju).
+Pokretanje (Ollama mora da radi):  python backend/evaluation/evaluate_answers.py [model]
+Kiristi podrazumevani model (llama3) i pise results/answers.jsonl; sa drugim modelom
+(gemma3:1b) pise results/answers_<model>.jsonl
 """
 import json
 import os

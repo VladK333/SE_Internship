@@ -4,7 +4,7 @@ Ulaz:   data/processed/chunks.jsonl
 Izlaz:  data/index/index.faiss   (vektori, IndexFlatIP nad normalizovanim vektorima = kosinusna slicnost)
         data/index/chunks.jsonl  (chunkovi istim redom kao vektori u indeksu)
         data/index/meta.json     (model, dimenzija, broj chunkova)
-Pokretanje (iz SE_praksa):  python backend/ingestion/build_index.py
+Pokretanje:  python backend/ingestion/build_index.py
 """
 import json
 import pathlib

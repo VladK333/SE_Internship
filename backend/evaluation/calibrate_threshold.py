@@ -2,7 +2,7 @@
 
 Za svako pitanje iz calibration_questions.json racuna najbolji skor pretrage (bez LLM-a)
 i trazi prag koji najbolje razdvaja pitanja sa odgovorom od pitanja bez odgovora.
-Pokretanje (iz SE_praksa):  python backend/evaluation/calibrate_threshold.py
+Pokretanje:  python backend/evaluation/calibrate_threshold.py
 Rezultat:                   backend/evaluation/calibration_results.json
 """
 import json

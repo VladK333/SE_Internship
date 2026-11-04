@@ -2,7 +2,7 @@
 (heading path, URL izvora, slike) iz data/processed/source_urls.json.
 
 Rezultat: data/processed/chunks.jsonl (jedan JSON objekat po liniji).
-Pokretanje (iz SE_praksa):  python backend/ingestion/chunk.py
+Pokretanje:  python backend/ingestion/chunk.py
 """
 import json
 import pathlib

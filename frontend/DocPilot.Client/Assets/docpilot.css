@@ -1,5 +1,3 @@
-/* Izgled odgovora u WebView2; boje prate teme klijenta (Themes/Light.xaml i Themes/Dark.xaml).
-   Tamna tema se uključuje klasom "dark" na <html> (MarkdownView je postavlja pri prikazu i pri promeni teme). */
 :root {
   --text: #1F2328; --muted: #6B7280; --heading: #1F3A5F; --link: #1F5FAD;
   --code-bg: #F1F3F6; --pre-bg: #F6F8FA; --pre-border: #E3E7EC; --border: #D9DDE3; --th-bg: #F1F3F6;

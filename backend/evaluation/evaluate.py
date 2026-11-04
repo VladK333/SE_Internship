@@ -1,11 +1,11 @@
-"""Evaluacija pretrage (3. nedelja, deo 1): bez LLM-a, za par sekundi.
+"""Evaluacija pretrage: bez LLM-a, za par sekundi.
 
 Metrike iz specifikacije:
   - koliko cesto je ocekivani izvor medju top 3 pronadjene sekcije (pitanja sa odgovorom);
   - koliko pitanja bez odgovora je ispravno odbijeno (guardrail 2, prag iz app.main).
-Dodatno: tacan izvor na 1. mestu i dobra pitanja koja je prag pogresno odbio.
+Dodatno: tacan izvor na 1. mestu i dobra pitanja koja je prag pogresno odbio
 
-Pokretanje (iz SE_praksa):  python backend/evaluation/evaluate.py [hybrid|vector]
+Pokretanje:  python backend/evaluation/evaluate.py [hybrid|vector]
 Rezultat:                   backend/evaluation/results/retrieval.json i .md (hybrid),
                             odnosno retrieval_vector.json i .md (samo vektorska pretraga)
 """
